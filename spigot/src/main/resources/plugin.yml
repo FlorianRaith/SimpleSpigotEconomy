@@ -2,3 +2,7 @@ name: MoneyMaker
 version: 1.0
 author: Dirantos
 main: me.dirantos.moneymaker.spigot.MoneyMakerPlugin
+
+commands:
+  test:
+    usage: /test
