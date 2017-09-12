@@ -13,7 +13,7 @@ public interface Account {
 
     List<Transaction> getTransactions();
 
-    int getTransationsAmount();
+    int getTransactionsAmount();
 
     List<Transfer> getTransfers();
 
@@ -27,7 +27,7 @@ public interface Account {
 
     Transfer transfer(Account account, double amount);
 
-    Transfer transfer(int accountNumber, double amount);
+    Interest receiveInterest(double interestRate);
 
     Transaction deposit(int amount);
 

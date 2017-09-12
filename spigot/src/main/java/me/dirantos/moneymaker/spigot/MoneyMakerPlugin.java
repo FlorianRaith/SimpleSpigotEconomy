@@ -1,5 +1,6 @@
 package me.dirantos.moneymaker.spigot;
 
+import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPIService;
 import me.dirantos.moneymaker.spigot.chat.ChatMessanger;
 import me.dirantos.moneymaker.spigot.command.CmdTest;

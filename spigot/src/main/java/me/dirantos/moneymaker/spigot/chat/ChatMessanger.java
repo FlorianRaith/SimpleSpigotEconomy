@@ -20,6 +20,19 @@ public final class ChatMessanger {
         this.prefix = prefix;
     }
 
+    /**
+     * Sends a automatic formatted and prefixed message to the reciever
+     *
+     * **message** turns bold
+     * __message__ turns to italics
+     * [[message]] highlights the text
+     *
+     * the chatlevel indicates the colors to use for the normal message and the highlighted one
+     *
+     * @param reciever the reciever
+     * @param message the message
+     * @param chatLevel the chatlevel
+     */
     public void send(CommandSender reciever, String message, ChatLevel chatLevel) {
         reciever.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix) + chatLevel.getColor() + format(message, chatLevel));
     }
