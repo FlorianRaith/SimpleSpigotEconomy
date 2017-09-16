@@ -8,16 +8,23 @@ import java.util.Date;
 
 public class TransactionImpl implements Transaction {
 
+    private final int id;
     private final Account recipient;
     private final double amount;
     private final Date date;
     private final TransactionType type;
 
     public TransactionImpl(Account recipient, double amount, Date date, TransactionType type) {
+        this.id = 0;
         this.recipient = recipient;
         this.amount = amount;
         this.date = date;
         this.type = type;
+    }
+
+    @Override
+    public int getID() {
+        return id;
     }
 
     @Override

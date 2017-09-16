@@ -16,8 +16,9 @@ public final class BankImpl implements Bank {
     private final List<Account> accounts = new ArrayList<>();
     private double money;
 
-    public BankImpl(UUID owner) {
+    public BankImpl(UUID owner, double money) {
         this.owner = owner;
+        this.money = money;
     }
 
     @Override
@@ -69,4 +70,11 @@ public final class BankImpl implements Bank {
         money -= amount;
     }
 
+    @Override
+    public String toString() {
+        return "BankImpl{" +
+                "owner=" + owner +
+                ", money=" + money +
+                '}';
+    }
 }
