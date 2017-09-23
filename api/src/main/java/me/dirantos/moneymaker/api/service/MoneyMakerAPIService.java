@@ -1,5 +1,6 @@
 package me.dirantos.moneymaker.api.service;
 
+import me.dirantos.moneymaker.api.account.AccountManager;
 import me.dirantos.moneymaker.api.fetchers.AccountFetcher;
 import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.fetchers.TransactionFetcher;
@@ -14,5 +15,7 @@ public interface MoneyMakerAPIService {
     TransactionFetcher getTransactionFetcher();
 
     TransactionManager getTransactionManager();
+
+    AccountManager getAccountManager();
 
 }

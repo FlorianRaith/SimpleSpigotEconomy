@@ -1,5 +1,6 @@
 package me.dirantos.moneymaker.spigot;
 
+import me.dirantos.moneymaker.api.account.AccountManager;
 import me.dirantos.moneymaker.api.fetchers.AccountFetcher;
 import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.fetchers.TransactionFetcher;
@@ -9,6 +10,7 @@ import me.dirantos.moneymaker.api.models.Transfer;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPIService;
 import me.dirantos.moneymaker.api.transaction.TransactionManager;
+import me.dirantos.moneymaker.spigot.account.AccountManagerImpl;
 import me.dirantos.moneymaker.spigot.chat.ChatMessanger;
 import me.dirantos.moneymaker.spigot.command.CmdTest;
 import me.dirantos.moneymaker.spigot.command.CommandManager;
@@ -37,9 +39,10 @@ public final class MoneyMakerPlugin extends JavaPlugin {
         AccountFetcher accountFetcher = new AccountFetcherImpl(mySQL, this);
         TransactionFetcher transactionFetcher = new TransactionFetcherImpl(mySQL, this);
 
-        TransactionManagerImpl transactionManager = new TransactionManagerImpl(transactionFetcher, accountFetcher);
+        TransactionManager transactionManager = new TransactionManagerImpl(transactionFetcher, accountFetcher);
+        AccountManager accountManager = new AccountManagerImpl(accountFetcher);
 
-        MoneyMakerService service = new MoneyMakerService(accountFetcher, bankFetcher, transactionFetcher, transactionManager);
+        MoneyMakerService service = new MoneyMakerService(accountFetcher, bankFetcher, transactionFetcher, transactionManager, accountManager);
         Bukkit.getServicesManager().register(MoneyMakerAPIService.class, service, this, ServicePriority.Normal);
 
         chatMessanger = new ChatMessanger("&3[&bMoneyMaker&3] ");
@@ -53,13 +56,14 @@ public final class MoneyMakerPlugin extends JavaPlugin {
 
     // just some tests
     public void tests() {
-        AccountFetcher accountFetcher = MoneyMakerAPI.getService().getAccountFetcher();
+        AccountManager accountManager = MoneyMakerAPI.getService().getAccountManager();
         TransactionManager transactionManager = MoneyMakerAPI.getService().getTransactionManager();
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
 
-            Account account = accountFetcher.saveData(new AccountImpl(-1, UUID.randomUUID(), 100, new ArrayList<>()));
-            Account second = accountFetcher.saveData(new AccountImpl(-1, UUID.randomUUID(), 500, new ArrayList<>()));
+            Account account = accountManager.createNewAccount(UUID.randomUUID(), 100);
+            Account second = accountManager.createNewAccount(UUID.randomUUID(), 500);
+
             log("created: " + account);
             log("created: " + second);
 
@@ -86,7 +90,7 @@ public final class MoneyMakerPlugin extends JavaPlugin {
             log("account: " + account);
             log("second: " + second);
 
-            Account fetched = accountFetcher.fetchData(account.getAccountNumber());
+            Account fetched = MoneyMakerAPI.getService().getAccountFetcher().fetchData(account.getAccountNumber());
             log("fetched account: " + fetched);
         });
     }
