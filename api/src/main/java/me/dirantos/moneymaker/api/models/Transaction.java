@@ -1,4 +1,4 @@
-package me.dirantos.moneymaker.api;
+package me.dirantos.moneymaker.api.models;
 
 import java.util.Date;
 
@@ -6,7 +6,7 @@ public interface Transaction {
 
     int getID();
 
-    Account getRecipient();
+    int getRecipientAccountNumber();
 
     double getAmount();
 

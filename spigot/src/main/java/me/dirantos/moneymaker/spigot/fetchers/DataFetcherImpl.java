@@ -7,12 +7,12 @@ import org.bukkit.Bukkit;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public abstract class DataFetcher<T, I> {
+public abstract class DataFetcherImpl<T, I> {
 
     private final MySQLConnectionPool mySQL;
     private final MoneyMakerPlugin plugin;
 
-    public DataFetcher(MySQLConnectionPool mySQL, MoneyMakerPlugin plugin) {
+    public DataFetcherImpl(MySQLConnectionPool mySQL, MoneyMakerPlugin plugin) {
         this.mySQL = mySQL;
         this.plugin = plugin;
     }
@@ -35,10 +35,10 @@ public abstract class DataFetcher<T, I> {
         runAsync(() -> callback.accept(fetchMultipleData(ids)));
     }
 
-    public abstract void saveData(T data);
+    public abstract T saveData(T data);
 
-    public final void saveDataAsync(T data) {
-        runAsync(() -> saveData(data));
+    public final void saveDataAsync(T data, Consumer<T> callback) {
+        runAsync(() -> callback.accept(saveData(data)));
     }
 
     public abstract void saveMultipleData(Set<T> data);

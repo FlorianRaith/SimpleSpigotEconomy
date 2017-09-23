@@ -1,4 +1,4 @@
-package me.dirantos.moneymaker.api;
+package me.dirantos.moneymaker.api.models;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,19 +8,13 @@ public interface Bank {
 
     UUID getOwner();
 
-    List<Account> getAccounts();
+    List<Integer> getAccountNumbers();
 
     /**
      * fetches all accounts from the database
      * @return future
      */
     CompletableFuture<Void> loadAccounts();
-
-    /**
-     * returns the sum of the balances of all accounts
-     * @return total balance
-     */
-    double getTotalBalance();
 
     /**
      * adds to every account their average balance (since the last interest) times the interest rate

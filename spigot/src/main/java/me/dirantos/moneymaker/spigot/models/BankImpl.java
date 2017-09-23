@@ -1,11 +1,8 @@
-package me.dirantos.moneymaker.spigot.impl;
+package me.dirantos.moneymaker.spigot.models;
 
-import me.dirantos.moneymaker.api.Account;
-import me.dirantos.moneymaker.api.Bank;
-import me.dirantos.moneymaker.api.Interest;
+import me.dirantos.moneymaker.api.models.Bank;
+import me.dirantos.moneymaker.api.models.Interest;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -13,11 +10,12 @@ import java.util.concurrent.CompletableFuture;
 public final class BankImpl implements Bank {
 
     private final UUID owner;
-    private final List<Account> accounts = new ArrayList<>();
+    private final List<Integer> accountNumbers;
     private double money;
 
-    public BankImpl(UUID owner, double money) {
+    public BankImpl(UUID owner, List<Integer> accountNumbers, double money) {
         this.owner = owner;
+        this.accountNumbers = accountNumbers;
         this.money = money;
     }
 
@@ -32,22 +30,18 @@ public final class BankImpl implements Bank {
     }
 
     @Override
-    public List<Account> getAccounts() {
-        return Collections.unmodifiableList(accounts);
-    }
-
-    @Override
-    public double getTotalBalance() {
-        return accounts.stream().map(Account::getBalance).reduce(0.0, Double::sum);
+    public List<Integer> getAccountNumbers() {
+        return accountNumbers;
     }
 
     @Override
     public List<Interest> receiveInterest(double interestRate) {
-        List<Interest> interests = new ArrayList<>();
+        /*List<Interest> interests = new ArrayList<>();
         for(Account account : accounts) {
             interests.add(account.receiveInterest(interestRate));
         }
-        return interests;
+        return interests;*/
+        return null;
     }
 
     @Override
@@ -74,7 +68,9 @@ public final class BankImpl implements Bank {
     public String toString() {
         return "BankImpl{" +
                 "owner=" + owner +
+                ", accountNumbers=" + accountNumbers +
                 ", money=" + money +
                 '}';
     }
+
 }
