@@ -2,7 +2,7 @@ package me.dirantos.moneymaker.api.models;
 
 import java.util.Date;
 
-public interface Transaction {
+public interface Transaction extends MMApiModel {
 
     int getID();
 

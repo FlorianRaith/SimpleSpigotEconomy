@@ -37,15 +37,18 @@ public final class AccountFetcherImpl extends DataFetcherImpl<Account, Integer> 
         try(Connection connection = getMySQL().getConnection(); PreparedStatement statement = connection.prepareStatement(FETCH_DATA)) {
             statement.setInt(1, id);
             try(ResultSet result = statement.executeQuery()) {
+                if(result.next()) {
 
-                UUID owner = UUID.fromString(result.getString("owner"));
-                double balance = Double.parseDouble(result.getString("balance"));
-                String[] arr = result.getString("transactions").split(",");
-                List<Integer> transactions = new ArrayList<>();
-                for (String s : arr) {
-                    transactions.add(Integer.parseInt(s));
+                    UUID owner = UUID.fromString(result.getString("owner"));
+                    double balance = Double.parseDouble(result.getString("balance"));
+                    String[] arr = result.getString("transactions").split(",");
+                    List<Integer> transactions = new ArrayList<>();
+                    for (String s : arr) {
+                        transactions.add(Integer.parseInt(s));
+                    }
+                    return new AccountImpl(id, owner, balance, transactions);
+
                 }
-                return new AccountImpl(id, owner, balance, transactions);
             }
         } catch (SQLException e) {
             e.printStackTrace();

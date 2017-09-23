@@ -1,29 +1,31 @@
 package me.dirantos.moneymaker.api.fetchers;
 
+import me.dirantos.moneymaker.api.models.MMApiModel;
+
 import java.util.Set;
 import java.util.function.Consumer;
 
-interface DataFetcher<T, I> {
+public interface DataFetcher<M extends MMApiModel, I> {
 
     void createTableIfNotExists();
 
     void createTableIfNotExistsAsync();
     
-    T fetchData(I id);
+    M fetchData(I id);
 
-    void fetchDataAsync(I id, Consumer<T> callback);
+    void fetchDataAsync(I id, Consumer<M> callback);
 
-    Set<T> fetchMultipleData(Set<I> ids);
+    Set<M> fetchMultipleData(Set<I> ids);
 
-    void fetchMultipleDataAsync(Set<I> ids, Consumer<Set<T>> callback);
+    void fetchMultipleDataAsync(Set<I> ids, Consumer<Set<M>> callback);
 
-    T saveData(T data);
+    M saveData(M data);
 
-    void saveDataAsync(T data, Consumer<T> callback);
+    void saveDataAsync(M data, Consumer<M> callback);
 
-    void saveMultipleData(Set<T> data);
+    void saveMultipleData(Set<M> data);
 
-    void saveMultipleDataAsync(Set<T> data);
+    void saveMultipleDataAsync(Set<M> data);
 
     void deleteData(I id);
 

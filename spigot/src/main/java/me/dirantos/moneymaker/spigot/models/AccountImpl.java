@@ -1,6 +1,8 @@
 package me.dirantos.moneymaker.spigot.models;
 
 import me.dirantos.moneymaker.api.models.Account;
+import me.dirantos.moneymaker.api.models.Interest;
+import me.dirantos.moneymaker.api.models.Transaction;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +45,12 @@ public final class AccountImpl implements Account {
     }
 
     @Override
+    public void setBalance(double balance) {
+        this.balance = balance;
+        balanceChanges.add(balance);
+    }
+
+    @Override
     public int getTransactionsAmount() {
         return transactions.size();
     }
@@ -50,6 +58,16 @@ public final class AccountImpl implements Account {
     @Override
     public List<Integer> getTransactionIDs() {
         return Collections.unmodifiableList(transactions);
+    }
+
+    @Override
+    public void addTransaction(Transaction transaction) {
+        if(transaction instanceof Interest) balanceChanges.clear();
+        transactions.add(transaction.getID());
+    }
+
+    public List<Double> getBalanceChanges() {
+        return balanceChanges;
     }
 
     @Override

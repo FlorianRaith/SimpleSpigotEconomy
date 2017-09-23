@@ -1,5 +1,7 @@
 package me.dirantos.moneymaker.spigot.fetchers;
 
+import me.dirantos.moneymaker.api.fetchers.DataFetcher;
+import me.dirantos.moneymaker.api.models.MMApiModel;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.mysql.MySQLConnectionPool;
 import org.bukkit.Bukkit;
@@ -7,7 +9,7 @@ import org.bukkit.Bukkit;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public abstract class DataFetcherImpl<T, I> {
+public abstract class DataFetcherImpl<T extends MMApiModel, I> implements DataFetcher<T, I> {
 
     private final MySQLConnectionPool mySQL;
     private final MoneyMakerPlugin plugin;
@@ -17,38 +19,32 @@ public abstract class DataFetcherImpl<T, I> {
         this.plugin = plugin;
     }
 
-    public abstract void createTableIfNotExists();
-
+    @Override
     public final void createTableIfNotExistsAsync() {
         runAsync(() -> createTableIfNotExists());
     }
 
-    public abstract T fetchData(I id);
-
+    @Override
     public final void fetchDataAsync(I id, Consumer<T> callback) {
         runAsync(() -> callback.accept(fetchData(id)));
     }
 
-    public abstract Set<T> fetchMultipleData(Set<I> ids);
-
+    @Override
     public final void fetchMultipleDataAsync(Set<I> ids, Consumer<Set<T>> callback) {
         runAsync(() -> callback.accept(fetchMultipleData(ids)));
     }
 
-    public abstract T saveData(T data);
-
+    @Override
     public final void saveDataAsync(T data, Consumer<T> callback) {
         runAsync(() -> callback.accept(saveData(data)));
     }
 
-    public abstract void saveMultipleData(Set<T> data);
-
+    @Override
     public final void saveMultipleDataAsync(Set<T> data) {
         runAsync(() -> saveMultipleData(data));
     }
 
-    public abstract void deleteData(I id);
-
+    @Override
     public final void deleteDataAsync(I id) {
         runAsync(() -> deleteData(id));
     }

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public interface Bank {
+public interface Bank extends MMApiModel {
 
     UUID getOwner();
 
