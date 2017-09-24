@@ -4,14 +4,16 @@ import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.chat.ChatMessanger;
 import org.bukkit.command.CommandSender;
 
-public abstract class AbstractCommand {
+public abstract class SubCommand {
 
-    private final String name;
+    private final CommandInfo info;
     private MoneyMakerPlugin plugin;
     private ChatMessanger messanger;
 
-    public AbstractCommand(String name) {
-        this.name = name;
+
+    public SubCommand() {
+        if(!getClass().isAnnotationPresent(CommandInfo.class)) throw new IllegalStateException("Every command must be annotated with CommandInfo");
+        this.info = getClass().getAnnotation(CommandInfo.class);
     }
 
     protected abstract void handle(CommandSender sender, String[] args);
@@ -21,8 +23,8 @@ public abstract class AbstractCommand {
         this.messanger = plugin.getChatMessanger();
     }
 
-    public final String getName() {
-        return name;
+    public CommandInfo getInfo() {
+        return info;
     }
 
     public MoneyMakerPlugin getPlugin() {

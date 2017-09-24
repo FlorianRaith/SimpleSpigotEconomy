@@ -6,6 +6,7 @@ import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.fetchers.TransactionFetcher;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPIService;
 import me.dirantos.moneymaker.api.transaction.TransactionManager;
+import me.dirantos.moneymaker.api.utils.ModelCache;
 
 public final class MoneyMakerService implements MoneyMakerAPIService {
 
@@ -14,13 +15,15 @@ public final class MoneyMakerService implements MoneyMakerAPIService {
     private final TransactionFetcher transactionFetcher;
     private final TransactionManager transactionManager;
     private final AccountManager accountManager;
+    private final ModelCache cache;
 
-    public MoneyMakerService(AccountFetcher accountFetcher, BankFetcher bankFetcher, TransactionFetcher transactionFetcher, TransactionManager transactionManager, AccountManager accountManager) {
+    public MoneyMakerService(AccountFetcher accountFetcher, BankFetcher bankFetcher, TransactionFetcher transactionFetcher, TransactionManager transactionManager, AccountManager accountManager, ModelCache cache) {
         this.accountFetcher = accountFetcher;
         this.bankFetcher = bankFetcher;
         this.transactionFetcher = transactionFetcher;
         this.transactionManager = transactionManager;
         this.accountManager = accountManager;
+        this.cache = cache;
     }
 
     @Override
@@ -46,6 +49,11 @@ public final class MoneyMakerService implements MoneyMakerAPIService {
     @Override
     public AccountManager getAccountManager() {
         return accountManager;
+    }
+
+    @Override
+    public ModelCache getCache() {
+        return cache;
     }
 
 }

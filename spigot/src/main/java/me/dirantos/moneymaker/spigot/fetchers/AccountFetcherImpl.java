@@ -2,6 +2,7 @@ package me.dirantos.moneymaker.spigot.fetchers;
 
 import me.dirantos.moneymaker.api.fetchers.AccountFetcher;
 import me.dirantos.moneymaker.api.models.Account;
+import me.dirantos.moneymaker.api.utils.ModelCache;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.models.AccountImpl;
 import me.dirantos.moneymaker.spigot.mysql.MySQLConnectionPool;
@@ -19,8 +20,8 @@ public final class AccountFetcherImpl extends DataFetcherImpl<Account, Integer> 
     private static final String FETCH_MULTIPLE_DATA = "SELECT * FROM `mm_accounts` WHERE `id` IN $values$";
     private static final String DELETE_DATA = "DELETE FROM `mm_accounts` WHERE `id` = ?";
 
-    public AccountFetcherImpl(MySQLConnectionPool mySQL, MoneyMakerPlugin plugin) {
-        super(mySQL, plugin);
+    public AccountFetcherImpl(MySQLConnectionPool mySQL, MoneyMakerPlugin plugin, ModelCache cache) {
+        super(mySQL, plugin, cache);
     }
 
     @Override
@@ -44,9 +45,16 @@ public final class AccountFetcherImpl extends DataFetcherImpl<Account, Integer> 
                     String[] arr = result.getString("transactions").split(",");
                     List<Integer> transactions = new ArrayList<>();
                     for (String s : arr) {
-                        transactions.add(Integer.parseInt(s));
+                        int x = -1;
+                        try {
+                            x = Integer.parseInt(s);
+                        } catch (NumberFormatException e) {}
+                        if(x != -1) transactions.add(x);
+
                     }
-                    return new AccountImpl(id, owner, balance, transactions);
+                    Account account = new AccountImpl(id, owner, balance, transactions);
+                    getCache().getAccountCache().add(id, account);
+                    return account;
 
                 }
             }
@@ -74,9 +82,15 @@ public final class AccountFetcherImpl extends DataFetcherImpl<Account, Integer> 
                     String[] arr = result.getString("transactions").split(",");
                     List<Integer> transactions = new ArrayList<>();
                     for (String s : arr) {
-                        transactions.add(Integer.parseInt(s));
+                        int x = -1;
+                        try {
+                            x = Integer.parseInt(s);
+                        } catch (NumberFormatException e) {}
+                        if(x != -1) transactions.add(x);
                     }
-                    accountSet.add(new AccountImpl(id, owner, balance, transactions));
+                    Account account = new AccountImpl(id, owner, balance, transactions);
+                    getCache().getAccountCache().add(id, account);
+                    accountSet.add(account);
                 }
                 return accountSet;
             }
@@ -129,6 +143,7 @@ public final class AccountFetcherImpl extends DataFetcherImpl<Account, Integer> 
 
     @Override
     public void deleteData(Integer id) {
+        getCache().getAccountCache().remove(id);
         try(Connection connection = getMySQL().getConnection(); PreparedStatement statement = connection.prepareStatement(DELETE_DATA)) {
             statement.setInt(1, id);
             statement.executeUpdate();

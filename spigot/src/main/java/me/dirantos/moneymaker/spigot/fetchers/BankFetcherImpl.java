@@ -2,6 +2,7 @@ package me.dirantos.moneymaker.spigot.fetchers;
 
 import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.models.Bank;
+import me.dirantos.moneymaker.api.utils.ModelCache;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.models.BankImpl;
 import me.dirantos.moneymaker.spigot.mysql.MySQLConnectionPool;
@@ -22,9 +23,10 @@ public final class BankFetcherImpl extends DataFetcherImpl<Bank, UUID> implement
     private static final String FETCH_MULTIPLE_DATA = "SELECT * FROM `mm_bank` WHERE `uuid` IN $values$";
     private static final String DELETE_DATA = "DELETE FROM `mm_bank` WHERE `uuid` = ?";
 
-    public BankFetcherImpl(MySQLConnectionPool mySQL, MoneyMakerPlugin plugin) {
-        super(mySQL, plugin);
+    public BankFetcherImpl(MySQLConnectionPool mySQL, MoneyMakerPlugin plugin, ModelCache cache) {
+        super(mySQL, plugin, cache);
     }
+
 
     @Override
     public void createTableIfNotExists() {

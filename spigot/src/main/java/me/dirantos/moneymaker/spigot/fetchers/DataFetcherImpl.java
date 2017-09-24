@@ -2,6 +2,7 @@ package me.dirantos.moneymaker.spigot.fetchers;
 
 import me.dirantos.moneymaker.api.fetchers.DataFetcher;
 import me.dirantos.moneymaker.api.models.MMApiModel;
+import me.dirantos.moneymaker.api.utils.ModelCache;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.mysql.MySQLConnectionPool;
 import org.bukkit.Bukkit;
@@ -13,10 +14,12 @@ public abstract class DataFetcherImpl<T extends MMApiModel, I> implements DataFe
 
     private final MySQLConnectionPool mySQL;
     private final MoneyMakerPlugin plugin;
+    private final ModelCache cache;
 
-    public DataFetcherImpl(MySQLConnectionPool mySQL, MoneyMakerPlugin plugin) {
+    public DataFetcherImpl(MySQLConnectionPool mySQL, MoneyMakerPlugin plugin, ModelCache cache) {
         this.mySQL = mySQL;
         this.plugin = plugin;
+        this.cache = cache;
     }
 
     @Override
@@ -59,6 +62,10 @@ public abstract class DataFetcherImpl<T extends MMApiModel, I> implements DataFe
 
     private final void runAsync(Runnable runnable) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable);
+    }
+
+    protected ModelCache getCache() {
+        return cache;
     }
 
     protected final String multipleInsertBuilder(String query, String replace, int size) {

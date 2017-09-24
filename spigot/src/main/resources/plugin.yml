@@ -4,5 +4,5 @@ author: Dirantos
 main: me.dirantos.moneymaker.spigot.MoneyMakerPlugin
 
 commands:
-  test:
-    usage: /test
+  account:
+    usage: /account

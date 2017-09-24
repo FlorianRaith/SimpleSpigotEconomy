@@ -5,6 +5,7 @@ import me.dirantos.moneymaker.api.models.Interest;
 import me.dirantos.moneymaker.api.models.Transaction;
 import me.dirantos.moneymaker.api.models.TransactionType;
 import me.dirantos.moneymaker.api.models.Transfer;
+import me.dirantos.moneymaker.api.utils.ModelCache;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.models.InterestImpl;
 import me.dirantos.moneymaker.spigot.models.TransactionImpl;
@@ -26,9 +27,10 @@ public final class TransactionFetcherImpl extends DataFetcherImpl<Transaction, I
     private static final String FETCH_MULTIPLE_DATA = "SELECT * FROM `mm_transactions` WHERE `id` IN $values$";
     private static final String DELETE_DATA = "DELETE FROM `mm_transactions` WHERE `id` = ?";
 
-    public TransactionFetcherImpl(MySQLConnectionPool mySQL, MoneyMakerPlugin plugin) {
-        super(mySQL, plugin);
+    public TransactionFetcherImpl(MySQLConnectionPool mySQL, MoneyMakerPlugin plugin, ModelCache cache) {
+        super(mySQL, plugin, cache);
     }
+
 
     @Override
     public void createTableIfNotExists() {
