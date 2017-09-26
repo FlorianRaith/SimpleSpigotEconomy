@@ -2,7 +2,7 @@ package me.dirantos.moneymaker.spigot.fetchers;
 
 import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.models.Bank;
-import me.dirantos.moneymaker.api.utils.ModelCache;
+import me.dirantos.moneymaker.api.cache.ModelCache;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.models.BankImpl;
 import me.dirantos.moneymaker.spigot.mysql.MySQLConnectionPool;
@@ -48,7 +48,9 @@ public final class BankFetcherImpl extends DataFetcherImpl<Bank, UUID> implement
                     for (String s : arr) {
                         accountNumbers.add(Integer.parseInt(s));
                     }
-                    return new BankImpl(uuid, accountNumbers, Double.parseDouble(result.getString("money")));
+                    Bank bank = new BankImpl(uuid, accountNumbers, Double.parseDouble(result.getString("money")));
+                    getCache().getBankCache().add(uuid, bank);
+                    return bank;
                 }
             }
         } catch (SQLException e) {
@@ -74,7 +76,10 @@ public final class BankFetcherImpl extends DataFetcherImpl<Bank, UUID> implement
                     for (String s : arr) {
                         accountNumbers.add(Integer.parseInt(s));
                     }
-                    bankSet.add(new BankImpl(UUID.fromString(result.getString("uuid")), accountNumbers, Double.parseDouble(result.getString("money"))));
+                    UUID uuid  = UUID.fromString(result.getString("uuid"));
+                    Bank bank = new BankImpl(uuid, accountNumbers, Double.parseDouble(result.getString("money")));
+                    getCache().getBankCache().add(uuid, bank);
+                    bankSet.add(bank);
                 }
                 return bankSet;
             }

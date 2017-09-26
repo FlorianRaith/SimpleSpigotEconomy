@@ -1,32 +1,33 @@
 package me.dirantos.moneymaker.spigot;
 
-import me.dirantos.moneymaker.api.account.AccountManager;
+import me.dirantos.moneymaker.api.cache.ModelCache;
 import me.dirantos.moneymaker.api.fetchers.AccountFetcher;
 import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.fetchers.TransactionFetcher;
-import me.dirantos.moneymaker.api.models.Account;
-import me.dirantos.moneymaker.api.models.Transaction;
-import me.dirantos.moneymaker.api.models.Transfer;
-import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
+import me.dirantos.moneymaker.api.managers.AccountManager;
+import me.dirantos.moneymaker.api.managers.BankManager;
+import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPIService;
-import me.dirantos.moneymaker.api.transaction.TransactionManager;
-import me.dirantos.moneymaker.spigot.account.AccountManagerImpl;
 import me.dirantos.moneymaker.spigot.chat.ChatMessanger;
 import me.dirantos.moneymaker.spigot.command.Command;
 import me.dirantos.moneymaker.spigot.commands.CmdCreateAccount;
 import me.dirantos.moneymaker.spigot.commands.CmdDeleteAccount;
 import me.dirantos.moneymaker.spigot.commands.CmdShowAccountBalance;
+import me.dirantos.moneymaker.spigot.commands.CmdTransfer;
 import me.dirantos.moneymaker.spigot.fetchers.AccountFetcherImpl;
 import me.dirantos.moneymaker.spigot.fetchers.BankFetcherImpl;
 import me.dirantos.moneymaker.spigot.fetchers.TransactionFetcherImpl;
+import me.dirantos.moneymaker.spigot.managers.AccountManagerImpl;
+import me.dirantos.moneymaker.spigot.managers.BankManagerImpl;
+import me.dirantos.moneymaker.spigot.managers.TransactionManagerImpl;
 import me.dirantos.moneymaker.spigot.mysql.MySQLConnectionPool;
-import me.dirantos.moneymaker.spigot.transaction.TransactionManagerImpl;
-import me.dirantos.moneymaker.api.utils.Cache;
-import me.dirantos.moneymaker.api.utils.ModelCache;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public final class MoneyMakerPlugin extends JavaPlugin {
@@ -44,8 +45,9 @@ public final class MoneyMakerPlugin extends JavaPlugin {
         TransactionFetcher transactionFetcher = new TransactionFetcherImpl(mySQL, this, cache);
 
 
-        TransactionManager transactionManager = new TransactionManagerImpl(transactionFetcher, accountFetcher);
-        AccountManager accountManager = new AccountManagerImpl(accountFetcher, cache);
+        TransactionManager transactionManager = new TransactionManagerImpl(transactionFetcher, accountFetcher, cache);
+        AccountManager accountManager = new AccountManagerImpl(accountFetcher, transactionManager, cache);
+        BankManager bankManager = new BankManagerImpl(bankFetcher, accountManager, cache);
 
         MoneyMakerService service = new MoneyMakerService(
                 accountFetcher,
@@ -53,6 +55,7 @@ public final class MoneyMakerPlugin extends JavaPlugin {
                 transactionFetcher,
                 transactionManager,
                 accountManager,
+                bankManager,
                 cache
         );
 
@@ -60,55 +63,24 @@ public final class MoneyMakerPlugin extends JavaPlugin {
 
         chatMessanger = new ChatMessanger("&3[&bMoneyMaker&3] ");
 
-        Command accountCommand = new Command("account", this);
+        Command accountCommand = new Command("managers", this);
         accountCommand.addSubCommand(new CmdCreateAccount());
         accountCommand.addSubCommand(new CmdDeleteAccount());
         accountCommand.addSubCommand(new CmdShowAccountBalance());
+        accountCommand.addSubCommand(new CmdTransfer());
         accountCommand.register();
 
-        //tests();
+        Command bankCommand = new Command("bank", this);
+        bankCommand.register();
 
-    }
-
-    // just some tests
-    public void tests() {
-        AccountManager accountManager = MoneyMakerAPI.getService().getAccountManager();
-        TransactionManager transactionManager = MoneyMakerAPI.getService().getTransactionManager();
-
+        Set<UUID> uuids = new HashSet<>();
+        Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).forEach(uuids::add);
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-
-            Account account = accountManager.createNewAccount(UUID.randomUUID(), 100);
-            Account second = accountManager.createNewAccount(UUID.randomUUID(), 500);
-
-            log("created: " + account);
-            log("created: " + second);
-
-
-            Transaction withdrawal = transactionManager.makeWithdrawal(account, 30.52);
-            log("made withdrawal");
-            log("transaction: " + withdrawal);
-            log("account: " + account);
-
-
-            Transaction deposit = transactionManager.makeDeposit(account, 10);
-            log("made deposit");
-            log("transaction: " + deposit);
-            log("account: " + account);
-
-            Transaction withdrawal2 = transactionManager.makeWithdrawal(account, 300);
-            log("made withdrawal");
-            log("transaction: " + withdrawal2);
-            log("account: " + account);
-
-            Transfer transfer = transactionManager.makeTransfer(account, second, 50);
-            log("made transfer");
-            log("transaction: " + transfer);
-            log("account: " + account);
-            log("second: " + second);
-
-            Account fetched = MoneyMakerAPI.getService().getAccountFetcher().fetchData(account.getAccountNumber());
-            log("fetched account: " + fetched);
+            for (UUID uuid : uuids) {
+                bankManager.loadBank(uuid);
+            }
         });
+
     }
 
     public ChatMessanger getChatMessanger() {

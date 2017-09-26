@@ -5,7 +5,7 @@ import me.dirantos.moneymaker.api.models.Interest;
 import me.dirantos.moneymaker.api.models.Transaction;
 import me.dirantos.moneymaker.api.models.TransactionType;
 import me.dirantos.moneymaker.api.models.Transfer;
-import me.dirantos.moneymaker.api.utils.ModelCache;
+import me.dirantos.moneymaker.api.cache.ModelCache;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.models.InterestImpl;
 import me.dirantos.moneymaker.spigot.models.TransactionImpl;

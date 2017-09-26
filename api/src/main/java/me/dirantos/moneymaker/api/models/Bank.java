@@ -17,7 +17,7 @@ public interface Bank extends MMApiModel {
     CompletableFuture<Void> loadAccounts();
 
     /**
-     * adds to every account their average balance (since the last interest) times the interest rate
+     * adds to every managers their average balance (since the last interest) times the interest rate
      * @param interestRate
      * @return interest-transactions
      */

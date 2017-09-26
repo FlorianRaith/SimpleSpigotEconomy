@@ -37,8 +37,8 @@ public final class BankImpl implements Bank {
     @Override
     public List<Interest> receiveInterest(double interestRate) {
         /*List<Interest> interests = new ArrayList<>();
-        for(Account account : accounts) {
-            interests.add(account.receiveInterest(interestRate));
+        for(Account managers : accounts) {
+            interests.add(managers.receiveInterest(interestRate));
         }
         return interests;*/
         return null;

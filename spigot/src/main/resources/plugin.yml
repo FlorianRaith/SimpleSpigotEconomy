@@ -5,4 +5,6 @@ main: me.dirantos.moneymaker.spigot.MoneyMakerPlugin
 
 commands:
   account:
-    usage: /account
+    usage: /managers
+  bank:
+    usage: /bank

@@ -3,6 +3,7 @@ package me.dirantos.moneymaker.spigot.command;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.chat.ChatLevel;
 import me.dirantos.moneymaker.spigot.chat.ChatMessanger;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -57,6 +58,12 @@ public final class Command {
                         for (int i = 1; i < args.length; i++) {
                             newArgs[i-1] = args[i];
                         }
+
+                        if(command.getInfo().playerOnly() && !(sender instanceof Player)) {
+                            messanger.send(sender, "This command is only for players!", ChatLevel.ERROR);
+                            return true;
+                        }
+
                         command.handle(sender, newArgs);
                         return true;
 

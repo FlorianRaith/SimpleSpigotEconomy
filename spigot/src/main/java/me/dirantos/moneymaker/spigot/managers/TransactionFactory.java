@@ -1,4 +1,4 @@
-package me.dirantos.moneymaker.spigot.transaction;
+package me.dirantos.moneymaker.spigot.managers;
 
 import me.dirantos.moneymaker.api.models.Interest;
 import me.dirantos.moneymaker.api.models.Transaction;

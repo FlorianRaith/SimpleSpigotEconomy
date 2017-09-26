@@ -17,4 +17,6 @@ public @interface CommandInfo {
 
     String[] description() default {};
 
+    boolean playerOnly() default false;
+
 }

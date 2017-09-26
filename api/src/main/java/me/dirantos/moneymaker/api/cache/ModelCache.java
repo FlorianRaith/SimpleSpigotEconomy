@@ -1,4 +1,4 @@
-package me.dirantos.moneymaker.api.utils;
+package me.dirantos.moneymaker.api.cache;
 
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.models.Bank;

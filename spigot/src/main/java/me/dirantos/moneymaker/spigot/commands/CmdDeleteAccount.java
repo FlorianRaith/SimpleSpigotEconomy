@@ -1,8 +1,8 @@
 package me.dirantos.moneymaker.spigot.commands;
 
+import me.dirantos.moneymaker.api.managers.AccountManager;
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
-import me.dirantos.moneymaker.api.service.MoneyMakerAPIService;
 import me.dirantos.moneymaker.spigot.chat.ChatLevel;
 import me.dirantos.moneymaker.spigot.command.CommandInfo;
 import me.dirantos.moneymaker.spigot.command.SubCommand;
@@ -10,18 +10,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandInfo(name = "delete", permission = "moneymaker.cmd.account.delete", usage = "delete [account-number]", description = {"deletes a account", "__player only!__"})
+import java.util.Optional;
+
+@CommandInfo(name = "delete", permission = "moneymaker.cmd.account.delete", usage = "delete [managers-number]", description = "deletes a managers", playerOnly = true)
 public class CmdDeleteAccount extends SubCommand {
 
     @Override
     protected void handle(CommandSender sender, String[] args) {
-        if(!(sender instanceof Player)) {
-            getMessanger().send(sender, "This command is only for players!", ChatLevel.ERROR);
-            return;
-        }
-
         if(args.length == 0) {
-            getMessanger().send(sender, "You have to give the account-number from your account!", ChatLevel.ERROR);
+            getMessanger().send(sender, "You have to give the managers-number from your managers!", ChatLevel.ERROR);
             return;
         }
 
@@ -33,23 +30,22 @@ public class CmdDeleteAccount extends SubCommand {
             return;
         }
 
-        MoneyMakerAPIService service = MoneyMakerAPI.getService();
+        AccountManager accountManager = MoneyMakerAPI.getService().getAccountManager();
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            Account account = service.getCache().getAccountCache().get(accountNumber);
-            if(account == null) account = service.getAccountFetcher().fetchData(accountNumber);
+            Optional<Account> account = accountManager.loadAccount(accountNumber);
 
-            if(account == null) {
-                getMessanger().send(sender, "The account could not be found!", ChatLevel.ERROR);
+            if(!account.isPresent()) {
+                getMessanger().send(sender, "The managers could not be found!", ChatLevel.ERROR);
                 return;
             }
 
-            if(!account.getOwner().equals(((Player) sender).getUniqueId())) {
-                getMessanger().send(sender, "The account does not belong to you!", ChatLevel.ERROR);
+            if(!account.get().getOwner().equals(((Player) sender).getUniqueId())) {
+                getMessanger().send(sender, "The managers does not belong to you!", ChatLevel.ERROR);
                 return;
             }
 
-            service.getAccountManager().deleteAccount(account);
-            getMessanger().send(sender, "The account __" + accountNumber + "__ has successfully been deleted!", ChatLevel.SUCCESS);
+            accountManager.deleteAccount(account.get());
+            getMessanger().send(sender, "The managers __" + accountNumber + "__ has successfully been deleted!", ChatLevel.SUCCESS);
 
         });
     }
