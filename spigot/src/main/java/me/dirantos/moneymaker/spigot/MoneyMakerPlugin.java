@@ -14,6 +14,10 @@ import me.dirantos.moneymaker.spigot.commands.CmdCreateAccount;
 import me.dirantos.moneymaker.spigot.commands.CmdDeleteAccount;
 import me.dirantos.moneymaker.spigot.commands.CmdShowAccountBalance;
 import me.dirantos.moneymaker.spigot.commands.CmdTransfer;
+import me.dirantos.moneymaker.spigot.config.ConfigFile;
+import me.dirantos.moneymaker.spigot.configs.MessageConfig;
+import me.dirantos.moneymaker.spigot.configs.MysqlConnectionConfig;
+import me.dirantos.moneymaker.spigot.configs.RewardConfig;
 import me.dirantos.moneymaker.spigot.fetchers.AccountFetcherImpl;
 import me.dirantos.moneymaker.spigot.fetchers.BankFetcherImpl;
 import me.dirantos.moneymaker.spigot.fetchers.TransactionFetcherImpl;
@@ -37,9 +41,16 @@ public final class MoneyMakerPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        ConfigFile config = new ConfigFile(this, "config.yml");
+
+        MysqlConnectionConfig connectionConfig = new MysqlConnectionConfig(config);
+        MessageConfig messageConfig = new MessageConfig(config);
+        RewardConfig rewardConfig = new RewardConfig(config);
+
+        MySQLConnectionPool mySQL = new MySQLConnectionPool(connectionConfig);
+
         ModelCache cache = new ModelCache();
 
-        MySQLConnectionPool mySQL = new MySQLConnectionPool("localhost", 3306, "rewi_moneymaker", "root", "", 10);
         BankFetcher bankFetcher = new BankFetcherImpl(mySQL, this, cache);
         AccountFetcher accountFetcher = new AccountFetcherImpl(mySQL, this, cache);
         TransactionFetcher transactionFetcher = new TransactionFetcherImpl(mySQL, this, cache);
@@ -59,11 +70,13 @@ public final class MoneyMakerPlugin extends JavaPlugin {
                 cache
         );
 
+        saveConfig();
+
         Bukkit.getServicesManager().register(MoneyMakerAPIService.class, service, this, ServicePriority.Normal);
 
-        chatMessanger = new ChatMessanger("&3[&bMoneyMaker&3] ");
+        chatMessanger = new ChatMessanger(messageConfig.getPrefix());
 
-        Command accountCommand = new Command("managers", this);
+        Command accountCommand = new Command("account", this);
         accountCommand.addSubCommand(new CmdCreateAccount());
         accountCommand.addSubCommand(new CmdDeleteAccount());
         accountCommand.addSubCommand(new CmdShowAccountBalance());
@@ -76,6 +89,11 @@ public final class MoneyMakerPlugin extends JavaPlugin {
         Set<UUID> uuids = new HashSet<>();
         Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).forEach(uuids::add);
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+
+            transactionFetcher.createTableIfNotExists();
+            accountFetcher.createTableIfNotExists();
+            transactionFetcher.createTableIfNotExists();
+
             for (UUID uuid : uuids) {
                 bankManager.loadBank(uuid);
             }

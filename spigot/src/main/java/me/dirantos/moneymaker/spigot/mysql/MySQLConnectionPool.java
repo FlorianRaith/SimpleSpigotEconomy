@@ -1,6 +1,7 @@
 package me.dirantos.moneymaker.spigot.mysql;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.dirantos.moneymaker.spigot.configs.MysqlConnectionConfig;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,6 +19,10 @@ public final class MySQLConnectionPool {
         dataSource.addDataSourceProperty("databaseName", database);
         dataSource.addDataSourceProperty("user", username);
         dataSource.addDataSourceProperty("password", password);
+    }
+
+    public MySQLConnectionPool(MysqlConnectionConfig config) {
+        this(config.getHost(), config.getPort(), config.getDatabase(), config.getUsername(), config.getPassword(), config.getMaxPoolSize());
     }
 
     public Connection getConnection() throws SQLException {

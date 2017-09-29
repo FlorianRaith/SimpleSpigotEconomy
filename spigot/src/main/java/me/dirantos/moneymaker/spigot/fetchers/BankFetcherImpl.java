@@ -46,7 +46,11 @@ public final class BankFetcherImpl extends DataFetcherImpl<Bank, UUID> implement
                     String[] arr = result.getString("account_numbers").split(",");
                     List<Integer> accountNumbers = new ArrayList<>();
                     for (String s : arr) {
-                        accountNumbers.add(Integer.parseInt(s));
+                        int x = -1;
+                        try {
+                            x = Integer.parseInt(s);
+                        } catch (NumberFormatException e) {}
+                        if(x != -1) accountNumbers.add(x);
                     }
                     Bank bank = new BankImpl(uuid, accountNumbers, Double.parseDouble(result.getString("money")));
                     getCache().getBankCache().add(uuid, bank);
@@ -74,7 +78,11 @@ public final class BankFetcherImpl extends DataFetcherImpl<Bank, UUID> implement
                     String[] arr = result.getString("account_numbers").split(",");
                     List<Integer> accountNumbers = new ArrayList<>();
                     for (String s : arr) {
-                        accountNumbers.add(Integer.parseInt(s));
+                        int x = -1;
+                        try {
+                            x = Integer.parseInt(s);
+                        } catch (NumberFormatException e) {}
+                        if(x != -1) accountNumbers.add(x);
                     }
                     UUID uuid  = UUID.fromString(result.getString("uuid"));
                     Bank bank = new BankImpl(uuid, accountNumbers, Double.parseDouble(result.getString("money")));
