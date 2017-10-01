@@ -1,6 +1,8 @@
 package me.dirantos.moneymaker.spigot.managers;
 
 import me.dirantos.moneymaker.api.cache.ModelCache;
+import me.dirantos.moneymaker.api.events.AsyncAccountCreateEvent;
+import me.dirantos.moneymaker.api.events.AsyncAccountDeleteEvent;
 import me.dirantos.moneymaker.api.fetchers.AccountFetcher;
 import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.managers.AccountManager;
@@ -8,9 +10,9 @@ import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.models.Bank;
 import me.dirantos.moneymaker.api.models.Transaction;
+import me.dirantos.moneymaker.api.events.AsyncBankUpdateEvent;
 import me.dirantos.moneymaker.spigot.models.AccountImpl;
 import me.dirantos.moneymaker.spigot.models.BankImpl;
-import me.dirantos.moneymaker.spigot.bankupdate.BankUpdateEvent;
 import me.dirantos.moneymaker.spigot.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -38,36 +40,12 @@ public final class AccountManagerImpl implements AccountManager {
     public Account createNewAccount(UUID owner, double startBalance) {
         Account account = accountFetcher.saveData(new AccountImpl(-1, owner, startBalance, new ArrayList<>()));
         cache.getAccountCache().add(account.getAccountNumber(), account);
-        Bank bank = cache.getBankCache().get(owner);
-        if(bank == null) bank = bankFetcher.fetchData(owner);
-        if(bank == null) {
-            bank = new BankImpl(owner, new ArrayList<>(), 0);
-            bankFetcher.saveData(bank);
-            cache.getBankCache().add(owner, bank);
-        }
+        Bank bank = Utils.loadBank(owner, cache, bankFetcher);
         ((BankImpl) bank).addAccount(account.getAccountNumber());
         bankFetcher.saveData(bank);
 
-        Set<Account> accounts = new HashSet<>();
-        Set<Integer> toFetch = new HashSet<>();
-
-        for (int accountNumber : bank.getAccountNumbers()) {
-            Account acc = cache.getAccountCache().get(accountNumber);
-            if(acc == null) {
-                toFetch.add(accountNumber);
-            } else {
-                accounts.add(acc);
-            }
-        }
-
-        List<Account> fetched = new ArrayList<>();
-        if(!toFetch.isEmpty()) fetched.addAll(accountFetcher.fetchMultipleData(toFetch));
-        for (Account acc : fetched) {
-            cache.getAccountCache().add(acc.getAccountNumber(), acc);
-        }
-        accounts.addAll(fetched);
-
-        Bukkit.getPluginManager().callEvent(new BankUpdateEvent(bank, accounts));
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, Utils.loadAccounts(bank.getAccountNumbers(), cache, accountFetcher)));
+        Bukkit.getPluginManager().callEvent(new AsyncAccountCreateEvent(account));
         return account;
     }
 
@@ -119,7 +97,8 @@ public final class AccountManagerImpl implements AccountManager {
         Bank bank = Utils.loadBank(account.getOwner(), cache, bankFetcher);
         ((BankImpl) bank).removeAccount(account.getAccountNumber());
         bankFetcher.saveData(bank);
-        Bukkit.getPluginManager().callEvent(new BankUpdateEvent(bank, Utils.loadAccounts(bank.getAccountNumbers(), cache, accountFetcher)));
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, Utils.loadAccounts(bank.getAccountNumbers(), cache, accountFetcher)));
+        Bukkit.getPluginManager().callEvent(new AsyncAccountDeleteEvent(account));
     }
 
     @Override

@@ -1,10 +1,10 @@
 package me.dirantos.moneymaker.spigot.commands;
 
 import me.dirantos.moneymaker.api.managers.AccountManager;
+import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.models.Transfer;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
-import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.spigot.chat.ChatLevel;
 import me.dirantos.moneymaker.spigot.command.CommandInfo;
 import me.dirantos.moneymaker.spigot.command.SubCommand;
@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender;
 import java.util.Optional;
 
 @CommandInfo(name = "transfer", permission = "moneymaker.cmd.account.transfer", usage = "transfer [amount] [own-accountNumber] [accoutNumber]", description = "transfers an amount of money for your managers to another managers", playerOnly = true)
-public class CmdTransfer extends SubCommand {
+public class CmdTransferAccount extends SubCommand {
 
     @Override
     protected void handle(CommandSender sender, String[] args) {

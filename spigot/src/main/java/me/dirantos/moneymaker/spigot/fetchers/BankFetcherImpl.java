@@ -1,8 +1,8 @@
 package me.dirantos.moneymaker.spigot.fetchers;
 
+import me.dirantos.moneymaker.api.cache.ModelCache;
 import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.models.Bank;
-import me.dirantos.moneymaker.api.cache.ModelCache;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.models.BankImpl;
 import me.dirantos.moneymaker.spigot.mysql.MySQLConnectionPool;

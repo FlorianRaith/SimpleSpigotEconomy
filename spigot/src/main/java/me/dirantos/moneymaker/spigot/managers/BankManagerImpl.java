@@ -6,13 +6,11 @@ import me.dirantos.moneymaker.api.managers.AccountManager;
 import me.dirantos.moneymaker.api.managers.BankManager;
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.models.Bank;
-import me.dirantos.moneymaker.spigot.models.BankImpl;
-import me.dirantos.moneymaker.spigot.bankupdate.BankUpdateEvent;
+import me.dirantos.moneymaker.api.events.AsyncBankUpdateEvent;
 import me.dirantos.moneymaker.spigot.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -45,7 +43,7 @@ public class BankManagerImpl implements BankManager {
         bank.setMoney(amount);
         bankFetcher.saveData(bank);
         Set<Account> accounts = loadAccounts(bank);
-        Bukkit.getPluginManager().callEvent(new BankUpdateEvent(bank, accounts));
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, accounts));
     }
 
     @Override

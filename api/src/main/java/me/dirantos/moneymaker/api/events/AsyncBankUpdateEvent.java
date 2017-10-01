@@ -1,24 +1,20 @@
-package me.dirantos.moneymaker.spigot.bankupdate;
+package me.dirantos.moneymaker.api.events;
 
-import me.dirantos.moneymaker.api.cache.ModelCache;
-import me.dirantos.moneymaker.api.fetchers.AccountFetcher;
-import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.models.Bank;
-import me.dirantos.moneymaker.spigot.models.BankImpl;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.*;
+import java.util.Set;
 
-public class BankUpdateEvent extends Event {
+public class AsyncBankUpdateEvent extends Event {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
     private final Bank bank;
     private final Set<Account> accounts;
 
-    public BankUpdateEvent(Bank bank, Set<Account> accounts) {
+    public AsyncBankUpdateEvent(Bank bank, Set<Account> accounts) {
         super(true);
         this.bank = bank;
         this.accounts = accounts;

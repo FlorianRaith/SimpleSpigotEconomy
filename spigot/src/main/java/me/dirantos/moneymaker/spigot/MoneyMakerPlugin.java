@@ -8,7 +8,6 @@ import me.dirantos.moneymaker.api.managers.AccountManager;
 import me.dirantos.moneymaker.api.managers.BankManager;
 import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPIService;
-import me.dirantos.moneymaker.spigot.bankupdate.BankUpdateListener;
 import me.dirantos.moneymaker.spigot.chat.ChatMessanger;
 import me.dirantos.moneymaker.spigot.command.Command;
 import me.dirantos.moneymaker.spigot.commands.*;
@@ -19,6 +18,8 @@ import me.dirantos.moneymaker.spigot.configs.RewardConfig;
 import me.dirantos.moneymaker.spigot.fetchers.AccountFetcherImpl;
 import me.dirantos.moneymaker.spigot.fetchers.BankFetcherImpl;
 import me.dirantos.moneymaker.spigot.fetchers.TransactionFetcherImpl;
+import me.dirantos.moneymaker.spigot.listeners.BankUpdateListener;
+import me.dirantos.moneymaker.spigot.listeners.RewardListener;
 import me.dirantos.moneymaker.spigot.managers.AccountManagerImpl;
 import me.dirantos.moneymaker.spigot.managers.BankManagerImpl;
 import me.dirantos.moneymaker.spigot.managers.TransactionManagerImpl;
@@ -74,7 +75,7 @@ public final class MoneyMakerPlugin extends JavaPlugin {
         accountCommand.addSubCommand(new CmdCreateAccount());
         accountCommand.addSubCommand(new CmdDeleteAccount());
         accountCommand.addSubCommand(new CmdShowAccountBalance());
-        accountCommand.addSubCommand(new CmdTransfer());
+        accountCommand.addSubCommand(new CmdTransferAccount());
         accountCommand.addSubCommand(new CmdDepositAccount());
         accountCommand.addSubCommand(new CmdWithdrawalAccount());
         accountCommand.register();
@@ -86,6 +87,8 @@ public final class MoneyMakerPlugin extends JavaPlugin {
 
         BankUpdateListener listener = new BankUpdateListener(this);
         listener.init();
+
+        RewardListener rewardListener = new RewardListener(this, rewardConfig);
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             transactionFetcher.createTableIfNotExists();

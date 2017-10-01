@@ -1,13 +1,14 @@
 package me.dirantos.moneymaker.spigot.managers;
 
+import me.dirantos.moneymaker.api.cache.ModelCache;
+import me.dirantos.moneymaker.api.events.AsyncTransactionEvent;
 import me.dirantos.moneymaker.api.fetchers.AccountFetcher;
 import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.fetchers.TransactionFetcher;
-import me.dirantos.moneymaker.api.models.*;
 import me.dirantos.moneymaker.api.managers.TransactionManager;
-import me.dirantos.moneymaker.api.cache.ModelCache;
+import me.dirantos.moneymaker.api.models.*;
+import me.dirantos.moneymaker.api.events.AsyncBankUpdateEvent;
 import me.dirantos.moneymaker.spigot.models.AccountImpl;
-import me.dirantos.moneymaker.spigot.bankupdate.BankUpdateEvent;
 import me.dirantos.moneymaker.spigot.models.BankImpl;
 import me.dirantos.moneymaker.spigot.utils.Utils;
 import org.apache.commons.lang.Validate;
@@ -52,8 +53,10 @@ public final class TransactionManagerImpl implements TransactionManager {
         Bank senderBank = Utils.loadBank(sender.getOwner(), cache, bankFetcher);
         Bank recipientBank = Utils.loadBank(recipient.getOwner(), cache, bankFetcher);
 
-        Bukkit.getPluginManager().callEvent(new BankUpdateEvent(senderBank, Utils.loadAccounts(senderBank.getAccountNumbers(), cache, accountFetcher)));
-        Bukkit.getPluginManager().callEvent(new BankUpdateEvent(recipientBank, Utils.loadAccounts(recipientBank.getAccountNumbers(), cache, accountFetcher)));
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(senderBank, Utils.loadAccounts(senderBank.getAccountNumbers(), cache, accountFetcher)));
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(recipientBank, Utils.loadAccounts(recipientBank.getAccountNumbers(), cache, accountFetcher)));
+        Bukkit.getPluginManager().callEvent(new AsyncTransactionEvent(validated, recipient, sender));
+
 
         return (Transfer) validated;
     }
@@ -73,7 +76,8 @@ public final class TransactionManagerImpl implements TransactionManager {
         accountFetcher.saveData(recipient);
 
         Bank bank = Utils.loadBank(recipient.getOwner(), cache, bankFetcher);
-        Bukkit.getPluginManager().callEvent(new BankUpdateEvent(bank, Utils.loadAccounts(bank.getAccountNumbers(), cache, accountFetcher)));
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, Utils.loadAccounts(bank.getAccountNumbers(), cache, accountFetcher)));
+        Bukkit.getPluginManager().callEvent(new AsyncTransactionEvent(validated, recipient));
 
         return (Interest) validated;
     }
@@ -95,7 +99,9 @@ public final class TransactionManagerImpl implements TransactionManager {
         recipient.addTransaction(validated);
         accountFetcher.saveData(recipient);
         bankFetcher.saveData(bank);
-        Bukkit.getPluginManager().callEvent(new BankUpdateEvent(bank, Utils.loadAccounts(bank.getAccountNumbers(), cache, accountFetcher)));
+
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, Utils.loadAccounts(bank.getAccountNumbers(), cache, accountFetcher)));
+        Bukkit.getPluginManager().callEvent(new AsyncTransactionEvent(validated, recipient));
 
         return validated;
     }
@@ -116,7 +122,9 @@ public final class TransactionManagerImpl implements TransactionManager {
         recipient.addTransaction(validated);
         accountFetcher.saveData(recipient);
         bankFetcher.saveData(bank);
-        Bukkit.getPluginManager().callEvent(new BankUpdateEvent(bank, Utils.loadAccounts(bank.getAccountNumbers(), cache, accountFetcher)));
+
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, Utils.loadAccounts(bank.getAccountNumbers(), cache, accountFetcher)));
+        Bukkit.getPluginManager().callEvent(new AsyncTransactionEvent(validated, recipient));
 
         return validated;
     }

@@ -1,10 +1,11 @@
-package me.dirantos.moneymaker.spigot.bankupdate;
+package me.dirantos.moneymaker.spigot.listeners;
 
 import me.dirantos.moneymaker.api.managers.BankManager;
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.models.Bank;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
+import me.dirantos.moneymaker.api.events.AsyncBankUpdateEvent;
 import me.dirantos.moneymaker.spigot.utils.sidebar.Sidebar;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,7 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class BankUpdateListener implements Listener {
 
@@ -40,7 +40,7 @@ public class BankUpdateListener implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             for (Player player : players) {
                 Bank bank = bankManager.loadBank(player);
-                Bukkit.getPluginManager().callEvent(new BankUpdateEvent(bank, bankManager.loadAccounts(bank)));
+                Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, bankManager.loadAccounts(bank)));
             }
         });
     }
@@ -52,12 +52,12 @@ public class BankUpdateListener implements Listener {
         BankManager bankManager = MoneyMakerAPI.getService().getBankManager();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             Bank bank = bankManager.loadBank(event.getPlayer());
-            Bukkit.getPluginManager().callEvent(new BankUpdateEvent(bank, bankManager.loadAccounts(bank)));
+            Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, bankManager.loadAccounts(bank)));
         });
     }
 
     @EventHandler
-    public void onUpdate(BankUpdateEvent event) {
+    public void onUpdate(AsyncBankUpdateEvent event) {
         Player player = Bukkit.getPlayer(event.getBank().getOwner());
         if(player == null) return;
 
