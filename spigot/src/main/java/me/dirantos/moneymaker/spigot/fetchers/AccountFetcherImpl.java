@@ -67,6 +67,7 @@ public final class AccountFetcherImpl extends DataFetcherImpl<Account, Integer> 
     @Override
     public Set<Account> fetchMultipleData(Set<Integer> ids) {
         String query = multipleFetchBuilder(FETCH_MULTIPLE_DATA, ids.size());
+        getPlugin().log(query);
         try(Connection connection = getMySQL().getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
             int i = 1;
             for (int id : ids) {

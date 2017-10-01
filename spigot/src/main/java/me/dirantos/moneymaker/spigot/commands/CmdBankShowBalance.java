@@ -10,15 +10,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandInfo(name = "balance", permission = "moneymaker.cmd.bank.showbalance", usage = "balance", description = "displays the current balance", playerOnly = true)
+@CommandInfo(name = "balance", permission = "moneymaker.cmd.bank.showbalance", usage = "balance [Player]", description = "displays the current balance", playerOnly = true)
 public class CmdBankShowBalance extends SubCommand {
 
     @Override
     protected void handle(CommandSender sender, String[] args) {
 
+        Player player = args.length == 0 ? ((Player) sender) : Bukkit.getPlayer(args[0]);
+
+        if(player == null) {
+            getMessanger().send(sender, "The player [[" + args[0] + "]] is not online!", ChatLevel.ERROR);
+            return;
+        }
+
         BankManager bankManager = MoneyMakerAPI.getService().getBankManager();
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            Bank bank = bankManager.loadBank(((Player) sender).getUniqueId());
+            Bank bank = bankManager.loadBank(player.getUniqueId());
 
             double balance = bank.getMoney();
             getMessanger().send(sender, "Your current balance is [[" + balance + "$]]!", ChatLevel.SUCCESS);

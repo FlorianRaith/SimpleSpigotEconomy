@@ -49,7 +49,7 @@ public class CmdBankSetBalance extends SubCommand {
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
 
             Bank bank = bankManager.loadBank(uuid);
-            bank.setMoney(amount);
+            bankManager.setBalance(bank, amount);
             getMessanger().send(sender, "The new balance is [[" + amount + "$]]!", ChatLevel.SUCCESS);
 
         });

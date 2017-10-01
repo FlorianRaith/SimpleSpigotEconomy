@@ -83,7 +83,7 @@ public abstract class DataFetcherImpl<T extends MMApiModel, I> implements DataFe
             sb.append((i == (size-1) ? "?)" : "?, "));
         }
 
-        return query.replace("$values$", sb.toString());
+        return query.replace("$values$", size == 0 ? "()" : sb.toString());
     }
 
 

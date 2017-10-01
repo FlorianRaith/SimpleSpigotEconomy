@@ -7,9 +7,13 @@ import me.dirantos.moneymaker.api.managers.BankManager;
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.models.Bank;
 import me.dirantos.moneymaker.spigot.models.BankImpl;
+import me.dirantos.moneymaker.spigot.bankupdate.BankUpdateEvent;
+import me.dirantos.moneymaker.spigot.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,14 +32,7 @@ public class BankManagerImpl implements BankManager {
 
     @Override
     public Bank loadBank(UUID owner) {
-        Bank bank = cache.getBankCache().get(owner);
-        if(bank == null) bankFetcher.fetchData(owner);
-        if(bank == null) {
-            bank = new BankImpl(owner, new ArrayList<>(), 0);
-            bankFetcher.saveData(bank);
-            cache.getBankCache().add(owner, bank);
-        }
-        return bank;
+        return Utils.loadBank(owner, cache, bankFetcher);
     }
 
     @Override
@@ -47,10 +44,13 @@ public class BankManagerImpl implements BankManager {
     public void setBalance(Bank bank, double amount) {
         bank.setMoney(amount);
         bankFetcher.saveData(bank);
+        Set<Account> accounts = loadAccounts(bank);
+        Bukkit.getPluginManager().callEvent(new BankUpdateEvent(bank, accounts));
     }
 
     @Override
     public Set<Account> loadAccounts(Bank bank) {
+        if(bank.getAccountNumbers().isEmpty()) return new HashSet<>();
         return accountManager.loadAccounts(bank.getAccountNumbers().stream().collect(Collectors.toSet()));
     }
 

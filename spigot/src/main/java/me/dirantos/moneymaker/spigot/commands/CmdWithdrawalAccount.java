@@ -1,7 +1,9 @@
 package me.dirantos.moneymaker.spigot.commands;
 
 import me.dirantos.moneymaker.api.managers.AccountManager;
+import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.models.Account;
+import me.dirantos.moneymaker.api.models.Transaction;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
 import me.dirantos.moneymaker.spigot.chat.ChatLevel;
 import me.dirantos.moneymaker.spigot.command.CommandInfo;
@@ -12,26 +14,38 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-@CommandInfo(name = "delete", permission = "moneymaker.cmd.account.delete", usage = "delete [accountNumber]", description = "deletes a account", playerOnly = true)
-public class CmdDeleteAccount extends SubCommand {
+@CommandInfo(name = "withdrawal", permission = "moneymaker.cmd.account.withdrawal", usage = "withdrawal [accountNumber] [amount]", description = "withdrawal from your account", playerOnly = true)
+public class CmdWithdrawalAccount extends SubCommand {
 
     @Override
     protected void handle(CommandSender sender, String[] args) {
-        if(args.length == 0) {
-            getMessanger().send(sender, "You have to give the accountNumber from your account!", ChatLevel.ERROR);
+
+        if(args.length < 2) {
+            getMessanger().send(sender, "You have to give the accountNumber and the amount!", ChatLevel.ERROR);
             return;
         }
 
         int accountNumber;
         try {
-           accountNumber = Integer.parseInt(args[0]);
+            accountNumber = Integer.parseInt(args[0]);
+        } catch(NumberFormatException e) {
+            getMessanger().send(sender, "Wrong arguments!", ChatLevel.ERROR);
+            return;
+        }
+
+        double amount;
+        try {
+            amount = Double.parseDouble(args[1]);
         } catch(NumberFormatException e) {
             getMessanger().send(sender, "Wrong arguments!", ChatLevel.ERROR);
             return;
         }
 
         AccountManager accountManager = MoneyMakerAPI.getService().getAccountManager();
+        TransactionManager transactionManager = MoneyMakerAPI.getService().getTransactionManager();
+
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
+
             Optional<Account> account = accountManager.loadAccount(accountNumber);
 
             if(!account.isPresent()) {
@@ -40,12 +54,12 @@ public class CmdDeleteAccount extends SubCommand {
             }
 
             if(!account.get().getOwner().equals(((Player) sender).getUniqueId())) {
-                getMessanger().send(sender, "The managers does not belong to you!", ChatLevel.ERROR);
+                getMessanger().send(sender, "The account does not belong to you!", ChatLevel.ERROR);
                 return;
             }
 
-            accountManager.deleteAccount(account.get());
-            getMessanger().send(sender, "The managers __" + accountNumber + "__ has successfully been deleted!", ChatLevel.SUCCESS);
+            Transaction transaction = transactionManager.makeWithdrawal(account.get(), amount);
+            getMessanger().send(sender, "Successfully withdrawal [[" + transaction.getAmount() + "$]] from __" + transaction.getRecipientAccountNumber() + "__", ChatLevel.SUCCESS);
 
         });
     }

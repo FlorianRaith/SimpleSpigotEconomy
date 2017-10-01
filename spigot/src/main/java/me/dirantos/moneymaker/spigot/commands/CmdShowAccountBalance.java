@@ -12,13 +12,13 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-@CommandInfo(name = "balance", permission = "moneymaker.cmd.account.showbalance", usage = "balance [account-number]", description = "displays the balance of the account", playerOnly = true)
+@CommandInfo(name = "balance", permission = "moneymaker.cmd.account.showbalance", usage = "balance accountNumber]", description = "displays the balance of the account", playerOnly = true)
 public class CmdShowAccountBalance extends SubCommand{
 
     @Override
     protected void handle(CommandSender sender, String[] args) {
         if(args.length == 0) {
-            getMessanger().send(sender, "You have to give the account-number from your account!", ChatLevel.ERROR);
+            getMessanger().send(sender, "You have to give the accountNumber from your account!", ChatLevel.ERROR);
             return;
         }
 

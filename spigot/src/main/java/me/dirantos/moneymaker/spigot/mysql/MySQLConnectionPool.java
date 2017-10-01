@@ -29,4 +29,8 @@ public final class MySQLConnectionPool {
         return dataSource.getConnection();
     }
 
+    public void close() {
+        dataSource.close();
+    }
+
 }

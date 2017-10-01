@@ -44,6 +44,14 @@ public final class BankImpl implements Bank {
         return null;
     }
 
+    public void addAccount(int accountNumber) {
+        accountNumbers.add(accountNumber);
+    }
+
+    public void removeAccount(int accountNumber) {
+        accountNumbers.remove(accountNumbers.indexOf(accountNumber));
+    }
+
     @Override
     public double getMoney() {
         return money;
