@@ -22,25 +22,25 @@ import java.util.*;
 
 public class RewardListener implements Listener {
 
-    private static final Set<Material> meat = new HashSet<>(Arrays.asList(
+    private static final Set<Material> MEAT = new HashSet<>(Arrays.asList(
             Material.PORK, Material.GRILLED_PORK, Material.COOKED_BEEF, Material.RAW_BEEF,
             Material.MUTTON, Material.COOKED_MUTTON, Material.RAW_CHICKEN, Material.COOKED_CHICKEN,
             Material.COOKED_RABBIT, Material.RABBIT
     ));
 
-    private static final Map<EntityType, List<Material>> animalFood = new HashMap<>();
+    private static final Map<EntityType, List<Material>> ANIMAL_FOOD = new HashMap<>();
 
     // list from https://minecraft.gamepedia.com/Breeding
     static {
-        animalFood.put(EntityType.HORSE, a(Material.APPLE, Material.WHEAT, Material.GOLDEN_APPLE, Material.GOLDEN_CARROT, Material.SUGAR, Material.HAY_BLOCK));
-        animalFood.put(EntityType.SHEEP, a(Material.WHEAT));
-        animalFood.put(EntityType.COW, a(Material.WHEAT));
-        animalFood.put(EntityType.MUSHROOM_COW, a(Material.WHEAT));
-        animalFood.put(EntityType.PIG, a(Material.CARROT_ITEM, Material.POTATO_ITEM));
-        animalFood.put(EntityType.CHICKEN, a(Material.SEEDS, Material.PUMPKIN_SEEDS, Material.MELON_SEEDS));
-        animalFood.put(EntityType.WOLF, a(Material.PORK, Material.GRILLED_PORK, Material.COOKED_BEEF, Material.RAW_BEEF, Material.MUTTON, Material.COOKED_MUTTON, Material.RAW_CHICKEN, Material.COOKED_CHICKEN, Material.COOKED_RABBIT, Material.RABBIT, Material.ROTTEN_FLESH, Material.COOKED_FISH, Material.RAW_FISH));
-        animalFood.put(EntityType.OCELOT, a(Material.RAW_FISH));
-        animalFood.put(EntityType.RABBIT, a(Material.YELLOW_FLOWER, Material.CARROT_ITEM, Material.GOLDEN_CARROT));
+        ANIMAL_FOOD.put(EntityType.HORSE, a(Material.APPLE, Material.WHEAT, Material.GOLDEN_APPLE, Material.GOLDEN_CARROT, Material.SUGAR, Material.HAY_BLOCK));
+        ANIMAL_FOOD.put(EntityType.SHEEP, a(Material.WHEAT));
+        ANIMAL_FOOD.put(EntityType.COW, a(Material.WHEAT));
+        ANIMAL_FOOD.put(EntityType.MUSHROOM_COW, a(Material.WHEAT));
+        ANIMAL_FOOD.put(EntityType.PIG, a(Material.CARROT_ITEM, Material.POTATO_ITEM));
+        ANIMAL_FOOD.put(EntityType.CHICKEN, a(Material.SEEDS, Material.PUMPKIN_SEEDS, Material.MELON_SEEDS));
+        ANIMAL_FOOD.put(EntityType.WOLF, a(Material.PORK, Material.GRILLED_PORK, Material.COOKED_BEEF, Material.RAW_BEEF, Material.MUTTON, Material.COOKED_MUTTON, Material.RAW_CHICKEN, Material.COOKED_CHICKEN, Material.COOKED_RABBIT, Material.RABBIT, Material.ROTTEN_FLESH, Material.COOKED_FISH, Material.RAW_FISH));
+        ANIMAL_FOOD.put(EntityType.OCELOT, a(Material.RAW_FISH));
+        ANIMAL_FOOD.put(EntityType.RABBIT, a(Material.YELLOW_FLOWER, Material.CARROT_ITEM, Material.GOLDEN_CARROT));
     }
 
     private final MoneyMakerPlugin plugin;
@@ -57,9 +57,9 @@ public class RewardListener implements Listener {
     @EventHandler
     public void onAnimalFeed(PlayerInteractAtEntityEvent event) {
 
-        if(!(animalFood.keySet().contains(event.getRightClicked().getType()))) return;
+        if(!(ANIMAL_FOOD.keySet().contains(event.getRightClicked().getType()))) return;
         if(event.getPlayer().getItemInHand() == null) return;
-        if(!animalFood.get(event.getRightClicked().getType()).contains(event.getPlayer().getItemInHand().getType())) return;
+        if(!ANIMAL_FOOD.get(event.getRightClicked().getType()).contains(event.getPlayer().getItemInHand().getType())) return;
 
         BankManager bankManager = MoneyMakerAPI.getService().getBankManager();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -121,7 +121,7 @@ public class RewardListener implements Listener {
     public void onConsumeMeat(PlayerItemConsumeEvent event) {
 
         if(!event.getItem().getType().isEdible()) return;
-        if(!meat.contains(event.getItem().getType())) return;
+        if(!MEAT.contains(event.getItem().getType())) return;
 
         BankManager bankManager = MoneyMakerAPI.getService().getBankManager();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
