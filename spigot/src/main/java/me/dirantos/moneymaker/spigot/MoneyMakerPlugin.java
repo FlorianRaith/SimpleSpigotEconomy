@@ -12,6 +12,7 @@ import me.dirantos.moneymaker.spigot.chat.ChatMessanger;
 import me.dirantos.moneymaker.spigot.command.Command;
 import me.dirantos.moneymaker.spigot.commands.*;
 import me.dirantos.moneymaker.spigot.config.ConfigFile;
+import me.dirantos.moneymaker.spigot.configs.InterestConfig;
 import me.dirantos.moneymaker.spigot.configs.MessageConfig;
 import me.dirantos.moneymaker.spigot.configs.MysqlConnectionConfig;
 import me.dirantos.moneymaker.spigot.configs.RewardConfig;
@@ -41,6 +42,7 @@ public final class MoneyMakerPlugin extends JavaPlugin {
         MysqlConnectionConfig connectionConfig = new MysqlConnectionConfig(config);
         MessageConfig messageConfig = new MessageConfig(config);
         RewardConfig rewardConfig = new RewardConfig(config);
+        InterestConfig interestConfig = new InterestConfig(config);
 
         connectionPool = new MySQLConnectionPool(connectionConfig);
 
@@ -89,6 +91,9 @@ public final class MoneyMakerPlugin extends JavaPlugin {
         listener.init();
 
         RewardListener rewardListener = new RewardListener(this, rewardConfig);
+
+        InterestReceiver interestReceiver = new InterestReceiver(this, 20*60*5, interestConfig);
+        interestReceiver.start();
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             transactionFetcher.createTableIfNotExists();

@@ -66,8 +66,7 @@ public final class TransactionManagerImpl implements TransactionManager {
         Interest interest = factory.createInterest(recipient.getAccountNumber(), 0, interestRate);
         Validate.isTrue(recipient.getAccountNumber() == interest.getRecipientAccountNumber(), "The given recipient managers does not correspond with the transaction recipient managers-number");
 
-        double averageBalances = ((AccountImpl) recipient).getBalanceChanges().stream().reduce(0.0, Double::sum) / 2.0;
-        recipient.setBalance(recipient.getBalance() + (averageBalances * interest.getInterestRate()));
+        recipient.setBalance(recipient.getBalance() + (recipient.getBalance() * interest.getInterestRate()));
         recipient.addTransaction(interest);
 
         Transaction validated = transactionFetcher.saveData(interest);
