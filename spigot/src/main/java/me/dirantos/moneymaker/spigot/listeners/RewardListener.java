@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -61,18 +62,7 @@ public class RewardListener implements Listener {
         if(event.getPlayer().getItemInHand() == null) return;
         if(!ANIMAL_FOOD.get(event.getRightClicked().getType()).contains(event.getPlayer().getItemInHand().getType())) return;
 
-        BankManager bankManager = MoneyMakerAPI.getService().getBankManager();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-
-            Bank bank = bankManager.loadBank(event.getPlayer());
-            double newMoney = bank.getMoney() + rewardConfig.getRewardFeedingAnimals();
-            if(newMoney < 0) newMoney = 0;
-            bankManager.setBalance(bank, newMoney);
-
-            String s = rewardConfig.getRewardFeedingAnimals() < 0 ? "abgezogen" : "gutgeschrieben";
-            ChatLevel level = rewardConfig.getRewardFeedingAnimals() < 0 ? ChatLevel.ERROR : ChatLevel.SUCCESS;
-            messanger.send(event.getPlayer(), "Du hast [[" + Math.abs(rewardConfig.getRewardFeedingAnimals()) + "$]] " + s + " bekommen", level);
-        });
+        reward(event.getPlayer(), rewardConfig.getRewardFeedingAnimals());
     }
 
     @EventHandler
@@ -81,19 +71,7 @@ public class RewardListener implements Listener {
         if(event.getEntity().getKiller() == null) return;
         if(!(event.getEntity() instanceof Monster)) return;
 
-        BankManager bankManager = MoneyMakerAPI.getService().getBankManager();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-
-            Bank bank = bankManager.loadBank(event.getEntity().getKiller());
-            double newMoney = bank.getMoney() + rewardConfig.getRewardKillingMonsers();
-            if(newMoney < 0) newMoney = 0;
-            bankManager.setBalance(bank, newMoney);
-
-            String s = rewardConfig.getRewardKillingMonsers() < 0 ? "abgezogen" : "gutgeschrieben";
-            ChatLevel level = rewardConfig.getRewardKillingMonsers() < 0 ? ChatLevel.ERROR : ChatLevel.SUCCESS;
-            messanger.send(event.getEntity().getKiller(), "Du hast [[" + Math.abs(rewardConfig.getRewardKillingMonsers()) + "$]] " + s + " bekommen", level);
-        });
-
+        reward(event.getEntity().getKiller(), rewardConfig.getRewardKillingMonsers());
     }
 
     @EventHandler
@@ -102,19 +80,7 @@ public class RewardListener implements Listener {
         if(event.getEntity().getKiller() == null) return;
         if(!(event.getEntity() instanceof Animals)) return;
 
-        BankManager bankManager = MoneyMakerAPI.getService().getBankManager();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-
-            Bank bank = bankManager.loadBank(event.getEntity().getKiller());
-            double newMoney = bank.getMoney() + rewardConfig.getRewardKillingAnimals();
-            if(newMoney < 0) newMoney = 0;
-            bankManager.setBalance(bank, newMoney);
-
-            String s = rewardConfig.getRewardKillingAnimals() < 0 ? "abgezogen" : "gutgeschrieben";
-            ChatLevel level = rewardConfig.getRewardKillingAnimals() < 0 ? ChatLevel.ERROR : ChatLevel.SUCCESS;
-            messanger.send(event.getEntity().getKiller(), "Du hast [[" + Math.abs(rewardConfig.getRewardKillingAnimals()) + "$]] " + s + " bekommen", level);
-        });
-
+        reward(event.getEntity().getKiller(), rewardConfig.getRewardKillingAnimals());
     }
 
     @EventHandler
@@ -123,19 +89,21 @@ public class RewardListener implements Listener {
         if(!event.getItem().getType().isEdible()) return;
         if(!MEAT.contains(event.getItem().getType())) return;
 
+        reward(event.getPlayer(), rewardConfig.getRewardEatingMeat());
+    }
+
+    private void reward(Player player, double reward) {
         BankManager bankManager = MoneyMakerAPI.getService().getBankManager();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-
-            Bank bank = bankManager.loadBank(event.getPlayer());
-            double newMoney = bank.getMoney() + rewardConfig.getRewardEatingMeat();
+            Bank bank = bankManager.loadBank(player);
+            double newMoney = bank.getMoney() + reward;
             if(newMoney < 0) newMoney = 0;
             bankManager.setBalance(bank, newMoney);
 
-            String s = rewardConfig.getRewardEatingMeat() < 0 ? "abgezogen" : "gutgeschrieben";
-            ChatLevel level = rewardConfig.getRewardEatingMeat() < 0 ? ChatLevel.ERROR : ChatLevel.SUCCESS;
-            messanger.send(event.getPlayer(), "Du hast [[" + Math.abs(rewardConfig.getRewardEatingMeat()) + "$]] " + s + " bekommen", level);
+            String s = reward < 0 ? "abgezogen" : "gutgeschrieben";
+            ChatLevel level = reward < 0 ? ChatLevel.ERROR : ChatLevel.SUCCESS;
+            messanger.send(player, "Du hast [[" + Math.abs(reward) + "$]] " + s + " bekommen", level);
         });
-
     }
 
     private static <T> List<T> a(T... a) {
