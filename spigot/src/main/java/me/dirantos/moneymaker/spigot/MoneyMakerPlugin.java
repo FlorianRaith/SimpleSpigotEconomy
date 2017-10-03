@@ -10,6 +10,7 @@ import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPIService;
 import me.dirantos.moneymaker.components.chat.ChatMessenger;
 import me.dirantos.moneymaker.components.command.Command;
+import me.dirantos.moneymaker.spigot.bank.BankOpenListener;
 import me.dirantos.moneymaker.spigot.commands.*;
 import me.dirantos.moneymaker.components.config.ConfigFile;
 import me.dirantos.moneymaker.spigot.configs.InterestConfig;
@@ -19,6 +20,7 @@ import me.dirantos.moneymaker.spigot.configs.RewardConfig;
 import me.dirantos.moneymaker.spigot.fetchers.AccountFetcherImpl;
 import me.dirantos.moneymaker.spigot.fetchers.BankFetcherImpl;
 import me.dirantos.moneymaker.spigot.fetchers.TransactionFetcherImpl;
+import me.dirantos.moneymaker.spigot.listeners.BlockClickListener;
 import me.dirantos.moneymaker.spigot.listeners.BankUpdateListener;
 import me.dirantos.moneymaker.spigot.listeners.RewardListener;
 import me.dirantos.moneymaker.spigot.managers.AccountManagerImpl;
@@ -85,13 +87,15 @@ public final class MoneyMakerPlugin extends JavaPlugin {
         Command bankCommand = new Command("bank", this);
         bankCommand.addSubCommand(new CmdBankSetBalance());
         bankCommand.addSubCommand(new CmdBankShowBalance());
-        bankCommand.addSubCommand(new CmdBankOpen(this));
+        bankCommand.addSubCommand(new CmdBankOpen());
         bankCommand.register();
 
         BankUpdateListener listener = new BankUpdateListener(this);
         listener.init();
 
-        RewardListener rewardListener = new RewardListener(this, rewardConfig);
+        new RewardListener(this, rewardConfig);
+        new BlockClickListener(this);
+        new BankOpenListener(this);
 
         InterestReceiver interestReceiver = new InterestReceiver(this, 20*60*5, interestConfig);
         interestReceiver.start();
