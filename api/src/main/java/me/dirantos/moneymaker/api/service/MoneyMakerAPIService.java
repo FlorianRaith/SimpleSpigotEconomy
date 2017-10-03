@@ -31,10 +31,25 @@ public interface MoneyMakerAPIService {
      */
     TransactionFetcher getTransactionFetcher();
 
+    /**
+     * The TransactionManagers provides different methods to handle transactions
+     * All methods should be called asynchronously because they are working directly with the database
+     * @return TransactionManager
+     */
     TransactionManager getTransactionManager();
 
+    /**
+     * The AccountManager provides different methods to handle accounts
+     * All methods should be called asynchronously because they are working directly with the database
+     * @return AccountManager
+     */
     AccountManager getAccountManager();
 
+    /**
+     * The BankManager provides different methods to handle banks
+     * All methods should be called asynchronously because they are working directly with the database
+     * @return BankManager
+     */
     BankManager getBankManager();
 
     ModelCache getCache();

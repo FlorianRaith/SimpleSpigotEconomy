@@ -6,10 +6,12 @@ import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
 import me.dirantos.moneymaker.components.chat.ChatLevel;
 import me.dirantos.moneymaker.components.command.CommandInfo;
 import me.dirantos.moneymaker.components.command.SubCommand;
+import me.dirantos.moneymaker.spigot.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @CommandInfo(name = "balance", permission = "moneymaker.cmd.account.showbalance", usage = "balance [accountNumber]", description = "displays the balance of the account", playerOnly = true)
@@ -46,7 +48,7 @@ public class CmdShowAccountBalance extends SubCommand{
 
 
             double balance = account.get().getBalance();
-            getMessenger().send(sender, "The account __" + accountNumber + "__ has [[" + balance + "$]]!", ChatLevel.SUCCESS);
+            getMessenger().send(sender, "The account __" + accountNumber + "__ has [[" + Utils.formatMoney(balance) + "]]!", ChatLevel.SUCCESS);
 
         });
     }

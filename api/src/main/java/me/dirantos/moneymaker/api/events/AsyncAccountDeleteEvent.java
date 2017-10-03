@@ -4,6 +4,9 @@ import me.dirantos.moneymaker.api.models.Account;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * This event gets calle when an account gets deleted
+ */
 public class AsyncAccountDeleteEvent extends Event {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();

@@ -34,6 +34,7 @@ public class BlockClickListener implements Listener {
             Bukkit.getPluginManager().callEvent(new AsyncBankInventoryOpenEvent(accounts, event.getPlayer()));
         });
 
+        event.setCancelled(true);
     }
 
 }

@@ -1,8 +1,10 @@
 package me.dirantos.moneymaker.spigot.commands;
 
 import me.dirantos.moneymaker.api.managers.AccountManager;
+import me.dirantos.moneymaker.api.managers.BankManager;
 import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.models.Account;
+import me.dirantos.moneymaker.api.models.Bank;
 import me.dirantos.moneymaker.api.models.Transaction;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
 import me.dirantos.moneymaker.components.chat.ChatLevel;
@@ -43,10 +45,18 @@ public class CmdDepositAccount extends SubCommand {
 
         AccountManager accountManager = MoneyMakerAPI.getService().getAccountManager();
         TransactionManager transactionManager = MoneyMakerAPI.getService().getTransactionManager();
+        BankManager bankManager = MoneyMakerAPI.getService().getBankManager();
 
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
 
+            Bank bank = bankManager.loadBank(((Player) sender));
+            if(bank.getMoney() < amount) {
+                getMessenger().send(sender, "You have not enough money!", ChatLevel.ERROR);
+                return;
+            }
+
             Optional<Account> account = accountManager.loadAccount(accountNumber);
+
 
             if(!account.isPresent()) {
                 getMessenger().send(sender, "The account could not be found!", ChatLevel.ERROR);

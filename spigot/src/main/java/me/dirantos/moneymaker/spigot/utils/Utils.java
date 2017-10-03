@@ -46,4 +46,8 @@ public final class Utils {
         return accounts;
     }
 
+    public static String formatMoney(double money) {
+        return String.format(Locale.ENGLISH, "%.2f", money) + "$";
+    }
+
 }

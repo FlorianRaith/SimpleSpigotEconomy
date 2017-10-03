@@ -5,6 +5,9 @@ import me.dirantos.moneymaker.api.models.Transaction;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * This events get called when a transaction to a specific account will be made
+ */
 public class AsyncTransactionEvent extends Event {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();

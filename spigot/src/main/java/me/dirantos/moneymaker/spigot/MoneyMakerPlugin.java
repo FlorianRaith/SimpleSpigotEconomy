@@ -101,7 +101,7 @@ public final class MoneyMakerPlugin extends JavaPlugin {
         interestReceiver.start();
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            transactionFetcher.createTableIfNotExists();
+            bankFetcher.createTableIfNotExists();
             accountFetcher.createTableIfNotExists();
             transactionFetcher.createTableIfNotExists();
         });
@@ -110,7 +110,9 @@ public final class MoneyMakerPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        connectionPool.close();
+        try {
+            connectionPool.close();
+        } catch(NoClassDefFoundError e) {}
     }
 
     public ChatMessenger getChatMessenger() {

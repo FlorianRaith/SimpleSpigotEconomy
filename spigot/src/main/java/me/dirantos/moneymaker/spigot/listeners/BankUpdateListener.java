@@ -7,6 +7,7 @@ import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.api.events.AsyncBankUpdateEvent;
 import me.dirantos.moneymaker.components.sidebar.Sidebar;
+import me.dirantos.moneymaker.spigot.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -65,7 +66,7 @@ public class BankUpdateListener implements Listener {
         List<String> lines = new ArrayList<>();
 
         lines.addAll(Arrays.asList("",
-                ChatColor.GREEN +  "Bank balance: " + ChatColor.RESET + String.format(Locale.ENGLISH, "%.2f", event.getBank().getMoney())  + "$", "",
+                ChatColor.GREEN +  "Bank balance: " + ChatColor.RESET + Utils.formatMoney(event.getBank().getMoney()), "",
                 ChatColor.GREEN + "Your accounts: "));
 
         event.getAccounts().stream()
@@ -78,7 +79,7 @@ public class BankUpdateListener implements Listener {
             totalBalance += account.getBalance();
         }
 
-        lines.addAll(Arrays.asList("", ChatColor.GREEN + "Account balance: " + ChatColor.RESET + String.format(Locale.ENGLISH, "%.2f", totalBalance) + "$"));
+        lines.addAll(Arrays.asList("", ChatColor.GREEN + "Account balance: " + ChatColor.RESET + Utils.formatMoney(totalBalance)));
 
         sidebar.setLines(lines);
         sidebar.display(player);

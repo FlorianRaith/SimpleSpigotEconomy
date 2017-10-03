@@ -10,6 +10,7 @@ import me.dirantos.moneymaker.components.inventory.ItemFactory;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.spigot.bank.inventories.BankInventory;
 import me.dirantos.moneymaker.spigot.bank.inventories.TransactionInventory;
+import me.dirantos.moneymaker.spigot.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -40,7 +41,7 @@ public class BankItem extends InventoryItem {
     public ItemStack createItem() {
         ItemStack item = ItemFactory.create(ChatColor.BLUE + "Account - " + account.getAccountNumber(), Material.GOLD_BLOCK, 1);
         return ItemFactory.setLore(item,
-                KEY + "balance: " + VALUE + String.format(Locale.ENGLISH, "%.2f", account.getBalance()) + "$",
+                KEY + "balance: " + VALUE + Utils.formatMoney(account.getBalance()),
                 KEY + "total transactions: " + VALUE + account.getTransactionIDs().size());
     }
 

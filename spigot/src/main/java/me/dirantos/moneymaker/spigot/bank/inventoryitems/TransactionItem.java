@@ -3,6 +3,7 @@ package me.dirantos.moneymaker.spigot.bank.inventoryitems;
 import me.dirantos.moneymaker.api.models.*;
 import me.dirantos.moneymaker.components.inventory.InventoryItem;
 import me.dirantos.moneymaker.components.inventory.ItemFactory;
+import me.dirantos.moneymaker.spigot.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -48,7 +49,7 @@ public class TransactionItem extends InventoryItem {
                 KEY + "recipient: " + VALUE + transaction.getRecipientAccountNumber()
         ));
         if(transaction instanceof Transfer) lore.add(KEY + "sender: " + VALUE + ((Transfer) transaction).getSenderAccountNumber());
-        if(!(transaction instanceof Interest)) lore.add(KEY + "amount: " + VALUE + String.format(Locale.ENGLISH, "%.2f", transaction.getAmount()) + "$");
+        if(!(transaction instanceof Interest)) lore.add(KEY + "amount: " + VALUE + Utils.formatMoney(transaction.getAmount()));
         if(transaction instanceof Interest) lore.add(KEY + "interestRate: " + VALUE + ((Interest) transaction).getInterestRate()*100 + "%");
         lore.add(KEY + "date: " + VALUE + transaction.getDate().toString());
 

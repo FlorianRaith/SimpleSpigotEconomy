@@ -7,6 +7,10 @@ import org.bukkit.event.HandlerList;
 
 import java.util.Set;
 
+/**
+ * This events get called when the bank balances changes,
+ * when one of the accounts balance changes and when an account gets created or gets deleted
+ */
 public class AsyncBankUpdateEvent extends Event {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();

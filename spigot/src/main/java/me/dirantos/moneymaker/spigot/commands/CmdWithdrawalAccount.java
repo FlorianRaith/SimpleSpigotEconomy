@@ -58,6 +58,11 @@ public class CmdWithdrawalAccount extends SubCommand {
                 return;
             }
 
+            if(account.get().getBalance() - amount < 0) {
+                getMessenger().send(sender, "Your account has not enough money!", ChatLevel.ERROR);
+                return;
+            }
+
             Transaction transaction = transactionManager.makeWithdrawal(account.get(), amount);
             getMessenger().send(sender, "Successfully withdrawal [[" + transaction.getAmount() + "$]] from __" + transaction.getRecipientAccountNumber() + "__", ChatLevel.SUCCESS);
 

@@ -56,12 +56,12 @@ public class CmdTransferAccount extends SubCommand {
             Optional<Account> otherAccount = accountManager.loadAccount(otherAccountNumber);
 
             if(!ownAccount.isPresent() || !otherAccount.isPresent()) {
-                getMessenger().send(sender, "Account-numbers are invalid!", ChatLevel.ERROR);
+                getMessenger().send(sender, "accountNumbers are invalid!", ChatLevel.ERROR);
                 return;
             }
 
             if(ownAccount.get().getBalance() - amount < 0) {
-                getMessenger().send(sender, "Your managers has not enough money", ChatLevel.ERROR);
+                getMessenger().send(sender, "Your account has not enough money", ChatLevel.ERROR);
                 return;
             }
 

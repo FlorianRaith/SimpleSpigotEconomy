@@ -35,6 +35,7 @@ public final class Command {
                 messenger.send(sender, "**================**");
                 messenger.send(sender, "");
                 for (SubCommand command : commands) {
+                    if(!sender.hasPermission(command.getInfo().permission())) continue;
                     command.sendUsage(sender, name);
                     for (String desc : command.getInfo().description()) {
                         messenger.send(sender, "  " + desc);
@@ -55,6 +56,7 @@ public final class Command {
                             return true;
                         }
 
+                        // create new args-array without the first argument
                         String[] newArgs = new String[args.length - 1];
                         for (int i = 1; i < args.length; i++) {
                             newArgs[i-1] = args[i];
