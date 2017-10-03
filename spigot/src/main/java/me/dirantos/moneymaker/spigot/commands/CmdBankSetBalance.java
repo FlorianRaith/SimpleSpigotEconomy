@@ -19,7 +19,7 @@ public class CmdBankSetBalance extends SubCommand {
     protected void handle(CommandSender sender, String[] args) {
 
         if(args.length < 2) {
-            getMessanger().send(sender, "You have to give the player owning the bank and the amount!", ChatLevel.ERROR);
+            sendUsage(sender, "bank");
             return;
         }
 
@@ -28,12 +28,12 @@ public class CmdBankSetBalance extends SubCommand {
             OfflinePlayer player = Bukkit.getPlayer(args[0]);
             uuid = player.getUniqueId();
         } catch(Exception e) {
-            getMessanger().send(sender, "Wrong arguments!", ChatLevel.ERROR);
+            getMessenger().send(sender, "Wrong arguments!", ChatLevel.ERROR);
             return;
         }
 
         if(uuid == null) {
-            getMessanger().send(sender, "This player does not exists!", ChatLevel.ERROR);
+            getMessenger().send(sender, "This player does not exists!", ChatLevel.ERROR);
             return;
         }
 
@@ -41,7 +41,7 @@ public class CmdBankSetBalance extends SubCommand {
         try {
             amount = Double.parseDouble(args[1]);
         } catch(NumberFormatException e) {
-            getMessanger().send(sender, "Wrong arguments!", ChatLevel.ERROR);
+            getMessenger().send(sender, "Wrong arguments!", ChatLevel.ERROR);
             return;
         }
 
@@ -50,7 +50,7 @@ public class CmdBankSetBalance extends SubCommand {
 
             Bank bank = bankManager.loadBank(uuid);
             bankManager.setBalance(bank, amount);
-            getMessanger().send(sender, "The new balance is [[" + amount + "$]]!", ChatLevel.SUCCESS);
+            getMessenger().send(sender, "The new balance is [[" + amount + "$]]!", ChatLevel.SUCCESS);
 
         });
 

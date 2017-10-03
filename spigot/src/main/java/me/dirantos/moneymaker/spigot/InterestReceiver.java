@@ -5,7 +5,7 @@ import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
 import me.dirantos.moneymaker.components.chat.ChatLevel;
-import me.dirantos.moneymaker.components.chat.ChatMessanger;
+import me.dirantos.moneymaker.components.chat.ChatMessenger;
 import me.dirantos.moneymaker.spigot.configs.InterestConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ import java.util.Set;
 public class InterestReceiver {
 
     private final MoneyMakerPlugin plugin;
-    private final ChatMessanger messanger;
+    private final ChatMessenger messenger;
     private final InterestConfig interestConfig;
     private final int delay;
     private int schedulerID;
@@ -25,7 +25,7 @@ public class InterestReceiver {
         this.plugin = plugin;
         this.delay = delay;
         this.interestConfig = interestConfig;
-        this.messanger = plugin.getChatMessanger();
+        this.messenger = plugin.getChatMessenger();
     }
 
     public void start() {
@@ -43,7 +43,7 @@ public class InterestReceiver {
                         transactionManager.makeInterest(account, interestConfig.getInterestRate());
                     }
 
-                    messanger.send(player, "You have received [[" + interestConfig.getInterestRate() * 100 + "%]] interest", ChatLevel.SUCCESS);
+                    messenger.send(player, "You have received [[" + interestConfig.getInterestRate() * 100 + "%]] interest", ChatLevel.SUCCESS);
                 }
             });
         }, delay, delay);

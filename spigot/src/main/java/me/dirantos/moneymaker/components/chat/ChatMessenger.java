@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class ChatMessanger {
+public final class ChatMessenger {
 
     private static final Pattern ITALICS_PATTERN = Pattern.compile("__(\\S[\\s\\S]*?)__");
     private static final Pattern BOLD_PATTERN = Pattern.compile("\\*\\*(\\S[\\s\\S]*?)\\*\\*");
@@ -16,7 +16,7 @@ public final class ChatMessanger {
 
     private final String prefix;
 
-    public ChatMessanger(String prefix) {
+    public ChatMessenger(String prefix) {
         this.prefix = prefix;
     }
 

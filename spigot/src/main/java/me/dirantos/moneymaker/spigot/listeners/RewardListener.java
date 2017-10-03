@@ -5,7 +5,7 @@ import me.dirantos.moneymaker.api.models.Bank;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPI;
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.components.chat.ChatLevel;
-import me.dirantos.moneymaker.components.chat.ChatMessanger;
+import me.dirantos.moneymaker.components.chat.ChatMessenger;
 import me.dirantos.moneymaker.spigot.configs.RewardConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -46,12 +46,12 @@ public class RewardListener implements Listener {
 
     private final MoneyMakerPlugin plugin;
     private final RewardConfig rewardConfig;
-    private final ChatMessanger messanger;
+    private final ChatMessenger messenger;
 
     public RewardListener(MoneyMakerPlugin plugin, RewardConfig rewardConfig) {
         this.plugin = plugin;
         this.rewardConfig = rewardConfig;
-        this.messanger = plugin.getChatMessanger();
+        this.messenger = plugin.getChatMessenger();
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
@@ -102,7 +102,7 @@ public class RewardListener implements Listener {
 
             String s = reward < 0 ? "abgezogen" : "gutgeschrieben";
             ChatLevel level = reward < 0 ? ChatLevel.ERROR : ChatLevel.SUCCESS;
-            messanger.send(player, "Du hast [[" + Math.abs(reward) + "$]] " + s + " bekommen", level);
+            messenger.send(player, "Du hast [[" + Math.abs(reward) + "$]] " + s + " bekommen", level);
         });
     }
 

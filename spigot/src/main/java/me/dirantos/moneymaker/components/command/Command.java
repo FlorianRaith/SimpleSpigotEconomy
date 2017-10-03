@@ -2,23 +2,24 @@ package me.dirantos.moneymaker.components.command;
 
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
 import me.dirantos.moneymaker.components.chat.ChatLevel;
-import me.dirantos.moneymaker.components.chat.ChatMessanger;
+import me.dirantos.moneymaker.components.chat.ChatMessenger;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public final class Command {
 
     private final String name;
     private final MoneyMakerPlugin plugin;
-    private final ChatMessanger messanger;
+    private final ChatMessenger messenger;
     private final Set<SubCommand> commands = new HashSet<>();
 
     public Command(String name, MoneyMakerPlugin plugin) {
         this.name = name;
         this.plugin = plugin;
-        this.messanger = plugin.getChatMessanger();
+        this.messenger = plugin.getChatMessenger();
     }
 
     public void addSubCommand(SubCommand command) {
@@ -31,16 +32,16 @@ public final class Command {
 
             // show help message
             if(args.length == 0) {
-                messanger.send(sender, "**================**");
-                messanger.send(sender, "");
+                messenger.send(sender, "**================**");
+                messenger.send(sender, "");
                 for (SubCommand command : commands) {
-                    messanger.send(sender, "[[/" + name + " " + command.getInfo().usage() + " ]]");
+                    command.sendUsage(sender, name);
                     for (String desc : command.getInfo().description()) {
-                        messanger.send(sender, "  " + desc);
+                        messenger.send(sender, "  " + desc);
                     }
                 }
-                messanger.send(sender, "");
-                messanger.send(sender, "**================**");
+                messenger.send(sender, "");
+                messenger.send(sender, "**================**");
                 return true;
             }
 
@@ -50,7 +51,7 @@ public final class Command {
                     if(args[0].equalsIgnoreCase(command.getInfo().name())) {
                         // check permissions
                         if(!sender.hasPermission(command.getInfo().permission())) {
-                            messanger.send(sender, "You don't have permissions to use this command!", ChatLevel.ERROR);
+                            messenger.send(sender, "You don't have permissions to use this command!", ChatLevel.ERROR);
                             return true;
                         }
 
@@ -60,7 +61,7 @@ public final class Command {
                         }
 
                         if(command.getInfo().playerOnly() && !(sender instanceof Player)) {
-                            messanger.send(sender, "This command is only for players!", ChatLevel.ERROR);
+                            messenger.send(sender, "This command is only for players!", ChatLevel.ERROR);
                             return true;
                         }
 
@@ -69,12 +70,21 @@ public final class Command {
 
                     }
                 }
-                messanger.send(sender, "The command [[/" + name + " " + args[0] + "]] could not be found!", ChatLevel.ERROR);
+                messenger.send(sender, "The command [[/" + name + " " + args[0] + "]] could not be found!", ChatLevel.ERROR);
                 return true;
             }
 
 
             return true;
+        });
+
+        plugin.getCommand(name).setTabCompleter((sender, cmd, alias, args) -> {
+            List<String> names = commands.stream().map(SubCommand::getInfo).map(CommandInfo::name).collect(Collectors.toList());
+
+            List<String> completions = new ArrayList<>();
+            StringUtil.copyPartialMatches(args[0], names, completions);
+
+            return args.length == 1 ? completions : new ArrayList<>();
         });
     }
 

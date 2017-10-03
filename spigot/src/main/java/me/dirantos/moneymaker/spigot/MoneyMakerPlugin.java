@@ -8,9 +8,8 @@ import me.dirantos.moneymaker.api.managers.AccountManager;
 import me.dirantos.moneymaker.api.managers.BankManager;
 import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPIService;
-import me.dirantos.moneymaker.components.chat.ChatMessanger;
+import me.dirantos.moneymaker.components.chat.ChatMessenger;
 import me.dirantos.moneymaker.components.command.Command;
-import me.dirantos.moneymaker.components.inventory.InventoryManager;
 import me.dirantos.moneymaker.spigot.commands.*;
 import me.dirantos.moneymaker.components.config.ConfigFile;
 import me.dirantos.moneymaker.spigot.configs.InterestConfig;
@@ -32,7 +31,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MoneyMakerPlugin extends JavaPlugin {
 
-    private ChatMessanger chatMessanger;
+    private ChatMessenger chatMessenger;
     private MySQLConnectionPool connectionPool;
 
     @Override
@@ -72,7 +71,7 @@ public final class MoneyMakerPlugin extends JavaPlugin {
 
         Bukkit.getServicesManager().register(MoneyMakerAPIService.class, service, this, ServicePriority.Normal);
 
-        chatMessanger = new ChatMessanger(messageConfig.getPrefix());
+        chatMessenger = new ChatMessenger(messageConfig.getPrefix());
 
         Command accountCommand = new Command("account", this);
         accountCommand.addSubCommand(new CmdCreateAccount());
@@ -110,8 +109,8 @@ public final class MoneyMakerPlugin extends JavaPlugin {
         connectionPool.close();
     }
 
-    public ChatMessanger getChatMessanger() {
-        return chatMessanger;
+    public ChatMessenger getChatMessenger() {
+        return chatMessenger;
     }
 
     public void log(String message) {

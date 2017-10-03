@@ -18,7 +18,7 @@ public class CmdDeleteAccount extends SubCommand {
     @Override
     protected void handle(CommandSender sender, String[] args) {
         if(args.length == 0) {
-            getMessanger().send(sender, "You have to give the accountNumber from your account!", ChatLevel.ERROR);
+            sendUsage(sender, "account");
             return;
         }
 
@@ -26,7 +26,7 @@ public class CmdDeleteAccount extends SubCommand {
         try {
            accountNumber = Integer.parseInt(args[0]);
         } catch(NumberFormatException e) {
-            getMessanger().send(sender, "Wrong arguments!", ChatLevel.ERROR);
+            getMessenger().send(sender, "Wrong arguments!", ChatLevel.ERROR);
             return;
         }
 
@@ -35,17 +35,17 @@ public class CmdDeleteAccount extends SubCommand {
             Optional<Account> account = accountManager.loadAccount(accountNumber);
 
             if(!account.isPresent()) {
-                getMessanger().send(sender, "The account could not be found!", ChatLevel.ERROR);
+                getMessenger().send(sender, "The account could not be found!", ChatLevel.ERROR);
                 return;
             }
 
             if(!account.get().getOwner().equals(((Player) sender).getUniqueId())) {
-                getMessanger().send(sender, "The managers does not belong to you!", ChatLevel.ERROR);
+                getMessenger().send(sender, "The managers does not belong to you!", ChatLevel.ERROR);
                 return;
             }
 
             accountManager.deleteAccount(account.get());
-            getMessanger().send(sender, "The managers __" + accountNumber + "__ has successfully been deleted!", ChatLevel.SUCCESS);
+            getMessenger().send(sender, "The managers __" + accountNumber + "__ has successfully been deleted!", ChatLevel.SUCCESS);
 
         });
     }

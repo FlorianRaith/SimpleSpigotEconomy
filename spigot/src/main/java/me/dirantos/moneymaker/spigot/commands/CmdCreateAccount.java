@@ -19,8 +19,8 @@ public class CmdCreateAccount extends SubCommand {
         AccountManager accountManager = MoneyMakerAPI.getService().getAccountManager();
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
             Account account = accountManager.createNewAccount(((Player) sender).getUniqueId());
-            getMessanger().send(sender, "Your account was successfully created.", ChatLevel.SUCCESS);
-            getMessanger().send(sender, "The accountNumber is __" + account.getAccountNumber() + "__.", ChatLevel.SUCCESS);
+            getMessenger().send(sender, "Your account was successfully created.", ChatLevel.SUCCESS);
+            getMessenger().send(sender, "The accountNumber is __" + account.getAccountNumber() + "__.", ChatLevel.SUCCESS);
         });
 
     }
