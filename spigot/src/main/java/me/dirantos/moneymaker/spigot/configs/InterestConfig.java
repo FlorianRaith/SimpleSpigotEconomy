@@ -1,7 +1,7 @@
 package me.dirantos.moneymaker.spigot.configs;
 
-import me.dirantos.moneymaker.spigot.config.AbstractConfig;
-import me.dirantos.moneymaker.spigot.config.ConfigFile;
+import me.dirantos.moneymaker.components.config.AbstractConfig;
+import me.dirantos.moneymaker.components.config.ConfigFile;
 
 public class InterestConfig extends AbstractConfig {
 

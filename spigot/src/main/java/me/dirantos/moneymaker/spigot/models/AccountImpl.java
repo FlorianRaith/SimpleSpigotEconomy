@@ -4,21 +4,16 @@ import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.models.Interest;
 import me.dirantos.moneymaker.api.models.Transaction;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public final class AccountImpl implements Account {
 
     private int accountNumber;
     private final UUID owner;
     private double balance;
-    // list for saving the balance when it will change to get the average balance for calculating the interest
-    private List<Double> balanceChanges = new ArrayList<>();
-    private final List<Integer> transactions;
+    private final Set<Integer> transactions;
 
-    public AccountImpl(int accountNumber, UUID owner, double balance, List<Integer> transactions) {
+    public AccountImpl(int accountNumber, UUID owner, double balance, Set<Integer> transactions) {
         this.accountNumber = accountNumber;
         this.owner = owner;
         this.balance = balance;
@@ -47,7 +42,6 @@ public final class AccountImpl implements Account {
     @Override
     public void setBalance(double balance) {
         this.balance = balance;
-        balanceChanges.add(balance);
     }
 
     @Override
@@ -56,18 +50,13 @@ public final class AccountImpl implements Account {
     }
 
     @Override
-    public List<Integer> getTransactionIDs() {
-        return Collections.unmodifiableList(transactions);
+    public Set<Integer> getTransactionIDs() {
+        return Collections.unmodifiableSet(transactions);
     }
 
     @Override
     public void addTransaction(Transaction transaction) {
-        if(transaction instanceof Interest) balanceChanges.clear();
         transactions.add(transaction.getID());
-    }
-
-    public List<Double> getBalanceChanges() {
-        return balanceChanges;
     }
 
     @Override

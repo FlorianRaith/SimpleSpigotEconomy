@@ -1,4 +1,4 @@
-package me.dirantos.moneymaker.spigot.config;
+package me.dirantos.moneymaker.components.config;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

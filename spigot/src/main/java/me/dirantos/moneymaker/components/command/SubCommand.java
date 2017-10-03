@@ -1,7 +1,7 @@
-package me.dirantos.moneymaker.spigot.command;
+package me.dirantos.moneymaker.components.command;
 
 import me.dirantos.moneymaker.spigot.MoneyMakerPlugin;
-import me.dirantos.moneymaker.spigot.chat.ChatMessanger;
+import me.dirantos.moneymaker.components.chat.ChatMessanger;
 import org.bukkit.command.CommandSender;
 
 public abstract class SubCommand {

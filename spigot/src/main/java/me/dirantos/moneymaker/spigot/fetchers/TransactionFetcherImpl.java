@@ -94,8 +94,10 @@ public final class TransactionFetcherImpl extends DataFetcherImpl<Transaction, I
                     switch (type) {
                         case TRANSFER:
                             transactionSet.add(new TransferImpl(id, recipient, amount, date, sender));
+                            break;
                         case INTEREST:
                             transactionSet.add(new InterestImpl(id, recipient, amount, date, interestRate));
+                            break;
                         default:
                             transactionSet.add(new TransactionImpl(id, recipient, amount, date, type));
                     }

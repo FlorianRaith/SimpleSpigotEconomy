@@ -1,4 +1,4 @@
-package me.dirantos.moneymaker.spigot.command;
+package me.dirantos.moneymaker.components.command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

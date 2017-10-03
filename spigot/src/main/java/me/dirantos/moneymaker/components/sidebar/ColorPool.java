@@ -1,4 +1,4 @@
-package me.dirantos.moneymaker.spigot.utils.sidebar;
+package me.dirantos.moneymaker.components.sidebar;
 
 import org.bukkit.ChatColor;
 

@@ -43,7 +43,7 @@ public final class AccountFetcherImpl extends DataFetcherImpl<Account, Integer> 
                     UUID owner = UUID.fromString(result.getString("owner"));
                     double balance = Double.parseDouble(result.getString("balance"));
                     String[] arr = result.getString("transactions").split(",");
-                    List<Integer> transactions = new ArrayList<>();
+                    Set<Integer> transactions = new HashSet<>();
                     for (String s : arr) {
                         int x = -1;
                         try {
@@ -67,7 +67,6 @@ public final class AccountFetcherImpl extends DataFetcherImpl<Account, Integer> 
     @Override
     public Set<Account> fetchMultipleData(Set<Integer> ids) {
         String query = multipleFetchBuilder(FETCH_MULTIPLE_DATA, ids.size());
-        getPlugin().log(query);
         try(Connection connection = getMySQL().getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
             int i = 1;
             for (int id : ids) {
@@ -81,7 +80,7 @@ public final class AccountFetcherImpl extends DataFetcherImpl<Account, Integer> 
                     UUID owner = UUID.fromString(result.getString("owner"));
                     double balance = Double.parseDouble(result.getString("balance"));
                     String[] arr = result.getString("transactions").split(",");
-                    List<Integer> transactions = new ArrayList<>();
+                    Set<Integer> transactions = new HashSet<>();
                     for (String s : arr) {
                         int x = -1;
                         try {

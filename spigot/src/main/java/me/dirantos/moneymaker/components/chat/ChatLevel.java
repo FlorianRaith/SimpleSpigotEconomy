@@ -1,4 +1,4 @@
-package me.dirantos.moneymaker.spigot.chat;
+package me.dirantos.moneymaker.components.chat;
 
 import org.bukkit.ChatColor;
 

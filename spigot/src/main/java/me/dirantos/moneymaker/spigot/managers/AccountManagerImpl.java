@@ -3,6 +3,7 @@ package me.dirantos.moneymaker.spigot.managers;
 import me.dirantos.moneymaker.api.cache.ModelCache;
 import me.dirantos.moneymaker.api.events.AsyncAccountCreateEvent;
 import me.dirantos.moneymaker.api.events.AsyncAccountDeleteEvent;
+import me.dirantos.moneymaker.api.events.AsyncBankUpdateEvent;
 import me.dirantos.moneymaker.api.fetchers.AccountFetcher;
 import me.dirantos.moneymaker.api.fetchers.BankFetcher;
 import me.dirantos.moneymaker.api.managers.AccountManager;
@@ -10,7 +11,6 @@ import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.models.Bank;
 import me.dirantos.moneymaker.api.models.Transaction;
-import me.dirantos.moneymaker.api.events.AsyncBankUpdateEvent;
 import me.dirantos.moneymaker.spigot.models.AccountImpl;
 import me.dirantos.moneymaker.spigot.models.BankImpl;
 import me.dirantos.moneymaker.spigot.utils.Utils;
@@ -38,7 +38,7 @@ public final class AccountManagerImpl implements AccountManager {
 
     @Override
     public Account createNewAccount(UUID owner, double startBalance) {
-        Account account = accountFetcher.saveData(new AccountImpl(-1, owner, startBalance, new ArrayList<>()));
+        Account account = accountFetcher.saveData(new AccountImpl(-1, owner, startBalance, new HashSet<>()));
         cache.getAccountCache().add(account.getAccountNumber(), account);
         Bank bank = Utils.loadBank(owner, cache, bankFetcher);
         ((BankImpl) bank).addAccount(account.getAccountNumber());
@@ -82,7 +82,7 @@ public final class AccountManagerImpl implements AccountManager {
 
     @Override
     public Set<Transaction> loadAllTransactions(Account account) {
-        return transactionManager.loadTransactions(account.getTransactionIDs().stream().collect(Collectors.toSet()));
+        return transactionManager.loadTransactions(account.getTransactionIDs());
     }
 
     @Override

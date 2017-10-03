@@ -8,10 +8,11 @@ import me.dirantos.moneymaker.api.managers.AccountManager;
 import me.dirantos.moneymaker.api.managers.BankManager;
 import me.dirantos.moneymaker.api.managers.TransactionManager;
 import me.dirantos.moneymaker.api.service.MoneyMakerAPIService;
-import me.dirantos.moneymaker.spigot.chat.ChatMessanger;
-import me.dirantos.moneymaker.spigot.command.Command;
+import me.dirantos.moneymaker.components.chat.ChatMessanger;
+import me.dirantos.moneymaker.components.command.Command;
+import me.dirantos.moneymaker.components.inventory.InventoryManager;
 import me.dirantos.moneymaker.spigot.commands.*;
-import me.dirantos.moneymaker.spigot.config.ConfigFile;
+import me.dirantos.moneymaker.components.config.ConfigFile;
 import me.dirantos.moneymaker.spigot.configs.InterestConfig;
 import me.dirantos.moneymaker.spigot.configs.MessageConfig;
 import me.dirantos.moneymaker.spigot.configs.MysqlConnectionConfig;
@@ -85,6 +86,7 @@ public final class MoneyMakerPlugin extends JavaPlugin {
         Command bankCommand = new Command("bank", this);
         bankCommand.addSubCommand(new CmdBankSetBalance());
         bankCommand.addSubCommand(new CmdBankShowBalance());
+        bankCommand.addSubCommand(new CmdBankOpen(this));
         bankCommand.register();
 
         BankUpdateListener listener = new BankUpdateListener(this);

@@ -1,4 +1,4 @@
-package me.dirantos.moneymaker.spigot.config;
+package me.dirantos.moneymaker.components.config;
 
 public abstract class AbstractConfig {
 

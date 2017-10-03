@@ -1,6 +1,6 @@
 package me.dirantos.moneymaker.api.models;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface Account extends MMApiModel {
@@ -15,7 +15,7 @@ public interface Account extends MMApiModel {
 
     int getTransactionsAmount();
 
-    List<Integer> getTransactionIDs();
+    Set<Integer> getTransactionIDs();
 
     void addTransaction(Transaction transaction);
 

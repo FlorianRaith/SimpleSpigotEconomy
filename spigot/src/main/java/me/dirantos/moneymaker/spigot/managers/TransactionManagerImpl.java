@@ -14,9 +14,7 @@ import me.dirantos.moneymaker.spigot.utils.Utils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public final class TransactionManagerImpl implements TransactionManager {
 
@@ -67,7 +65,6 @@ public final class TransactionManagerImpl implements TransactionManager {
         Validate.isTrue(recipient.getAccountNumber() == interest.getRecipientAccountNumber(), "The given recipient managers does not correspond with the transaction recipient managers-number");
 
         recipient.setBalance(recipient.getBalance() + (recipient.getBalance() * interest.getInterestRate()));
-        recipient.addTransaction(interest);
 
         Transaction validated = transactionFetcher.saveData(interest);
 
@@ -83,7 +80,7 @@ public final class TransactionManagerImpl implements TransactionManager {
 
     @Override
     public Transaction makeDeposit(Account recipient, double amount) {
-        Transaction transaction = factory.createWithdrawal(recipient.getAccountNumber(), amount);
+        Transaction transaction = factory.createDeposit(recipient.getAccountNumber(), amount);
         Validate.isTrue(recipient.getAccountNumber() == transaction.getRecipientAccountNumber(), "The given recipient managers does not correspond with the transaction recipient managers-number");
 
         Bank bank = Utils.loadBank(recipient.getOwner(), cache, bankFetcher);
@@ -107,7 +104,7 @@ public final class TransactionManagerImpl implements TransactionManager {
 
     @Override
     public Transaction makeWithdrawal(Account recipient, double amount) {
-        Transaction transaction = factory.createDeposit(recipient.getAccountNumber(), amount);
+        Transaction transaction = factory.createWithdrawal(recipient.getAccountNumber(), amount);
         Validate.isTrue(recipient.getAccountNumber() == transaction.getRecipientAccountNumber(), "The given recipient managers does not correspond with the transaction recipient managers-number");
 
         if(recipient.getBalance() - transaction.getAmount() < 0) recipient.setBalance(0);
@@ -141,15 +138,20 @@ public final class TransactionManagerImpl implements TransactionManager {
         Set<Integer> toFetch = new HashSet<>();
 
         for (int id : ids) {
-            Transaction account = cache.getTransactionCache().get(id);
-            if(account == null) {
+            Transaction transaction = cache.getTransactionCache().get(id);
+            if(transaction == null) {
                 toFetch.add(id);
             } else {
-                transactions.add(account);
+                transactions.add(transaction);
             }
         }
 
-        transactions.addAll(transactionFetcher.fetchMultipleData(toFetch));
+        List<Transaction> fetched = new ArrayList<>();
+        if(!toFetch.isEmpty()) fetched.addAll(transactionFetcher.fetchMultipleData(toFetch));
+        for (Transaction transaction : fetched) {
+            cache.getTransactionCache().add(transaction.getID(), transaction);
+        }
+        transactions.addAll(fetched);
 
         return transactions;
     }
