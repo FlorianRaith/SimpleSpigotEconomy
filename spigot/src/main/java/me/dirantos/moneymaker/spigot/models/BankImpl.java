@@ -25,23 +25,8 @@ public final class BankImpl implements Bank {
     }
 
     @Override
-    public CompletableFuture<Void> loadAccounts() {
-        return null;
-    }
-
-    @Override
     public List<Integer> getAccountNumbers() {
         return accountNumbers;
-    }
-
-    @Override
-    public List<Interest> receiveInterest(double interestRate) {
-        /*List<Interest> interests = new ArrayList<>();
-        for(Account managers : accounts) {
-            interests.add(managers.receiveInterest(interestRate));
-        }
-        return interests;*/
-        return null;
     }
 
     public void addAccount(int accountNumber) {
@@ -57,19 +42,8 @@ public final class BankImpl implements Bank {
         return money;
     }
 
-    @Override
     public void setMoney(double money) {
         this.money = money;
-    }
-
-    @Override
-    public void addMoney(double amount) {
-        money += amount;
-    }
-
-    @Override
-    public void removeMoney(double amount) {
-        money -= amount;
     }
 
     @Override

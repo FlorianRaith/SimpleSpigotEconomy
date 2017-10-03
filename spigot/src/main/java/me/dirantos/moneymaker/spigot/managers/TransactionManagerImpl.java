@@ -38,13 +38,13 @@ public final class TransactionManagerImpl implements TransactionManager {
         Validate.isTrue(sender.getAccountNumber() == transfer.getSenderAccountNumber(), "The given sender managers does not correspond with the transaction sender managers-number");
 
         if(sender.getBalance() - transfer.getAmount() < 0) throw new IllegalStateException("The sender has not enough money");
-        sender.setBalance(sender.getBalance() - transfer.getAmount());
-        recipient.setBalance(recipient.getBalance() + transfer.getAmount());
+        ((AccountImpl) sender).setBalance(sender.getBalance() - transfer.getAmount());
+        ((AccountImpl) recipient).setBalance(recipient.getBalance() + transfer.getAmount());
 
         Transaction validated = transactionFetcher.saveData(transfer);
 
-        recipient.addTransaction(validated);
-        sender.addTransaction(validated);
+        ((AccountImpl) recipient).addTransaction(validated);
+        ((AccountImpl) sender).addTransaction(validated);
         accountFetcher.saveData(recipient);
         accountFetcher.saveData(sender);
 
@@ -64,11 +64,11 @@ public final class TransactionManagerImpl implements TransactionManager {
         Interest interest = factory.createInterest(recipient.getAccountNumber(), 0, interestRate);
         Validate.isTrue(recipient.getAccountNumber() == interest.getRecipientAccountNumber(), "The given recipient managers does not correspond with the transaction recipient managers-number");
 
-        recipient.setBalance(recipient.getBalance() + (recipient.getBalance() * interest.getInterestRate()));
+        ((AccountImpl) recipient).setBalance(recipient.getBalance() + (recipient.getBalance() * interest.getInterestRate()));
 
         Transaction validated = transactionFetcher.saveData(interest);
 
-        recipient.addTransaction(validated);
+        ((AccountImpl) recipient).addTransaction(validated);
         accountFetcher.saveData(recipient);
 
         Bank bank = Utils.loadBank(recipient.getOwner(), cache, bankFetcher);
@@ -87,12 +87,12 @@ public final class TransactionManagerImpl implements TransactionManager {
 
         if(bank.getMoney() - amount < 0) throw new IllegalStateException("The bank has not enough money!");
 
-        recipient.setBalance(recipient.getBalance() + transaction.getAmount());
+        ((AccountImpl) recipient).setBalance(recipient.getBalance() + transaction.getAmount());
         ((BankImpl) bank).setMoney(bank.getMoney() - amount);
 
         Transaction validated = transactionFetcher.saveData(transaction);
 
-        recipient.addTransaction(validated);
+        ((AccountImpl) recipient).addTransaction(validated);
         accountFetcher.saveData(recipient);
         bankFetcher.saveData(bank);
 
@@ -107,15 +107,15 @@ public final class TransactionManagerImpl implements TransactionManager {
         Transaction transaction = factory.createWithdrawal(recipient.getAccountNumber(), amount);
         Validate.isTrue(recipient.getAccountNumber() == transaction.getRecipientAccountNumber(), "The given recipient managers does not correspond with the transaction recipient managers-number");
 
-        if(recipient.getBalance() - transaction.getAmount() < 0) recipient.setBalance(0);
-        else recipient.setBalance(recipient.getBalance() - transaction.getAmount());
+        if(recipient.getBalance() - transaction.getAmount() < 0) ((AccountImpl) recipient).setBalance(0);
+        else ((AccountImpl) recipient).setBalance(recipient.getBalance() - transaction.getAmount());
 
         Bank bank = Utils.loadBank(recipient.getOwner(), cache, bankFetcher);
         ((BankImpl) bank).setMoney(bank.getMoney() + transaction.getAmount());
 
         Transaction validated = transactionFetcher.saveData(transaction);
 
-        recipient.addTransaction(validated);
+        ((AccountImpl) recipient).addTransaction(validated);
         accountFetcher.saveData(recipient);
         bankFetcher.saveData(bank);
 

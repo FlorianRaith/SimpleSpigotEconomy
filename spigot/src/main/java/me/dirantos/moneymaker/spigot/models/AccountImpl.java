@@ -39,7 +39,6 @@ public final class AccountImpl implements Account {
         return balance;
     }
 
-    @Override
     public void setBalance(double balance) {
         this.balance = balance;
     }
@@ -54,7 +53,6 @@ public final class AccountImpl implements Account {
         return Collections.unmodifiableSet(transactions);
     }
 
-    @Override
     public void addTransaction(Transaction transaction) {
         transactions.add(transaction.getID());
     }

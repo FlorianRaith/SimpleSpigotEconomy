@@ -11,28 +11,9 @@ public interface Bank extends MMApiModel {
     List<Integer> getAccountNumbers();
 
     /**
-     * fetches all accounts from the database
-     * @return future
-     */
-    CompletableFuture<Void> loadAccounts();
-
-    /**
-     * adds to every managers their average balance (since the last interest) times the interest rate
-     * @param interestRate
-     * @return interest-transactions
-     */
-    List<Interest> receiveInterest(double interestRate);
-
-    /**
      * returns the corresponding player's money
      * @return player's money
      */
     double getMoney();
-
-    void setMoney(double money);
-
-    void addMoney(double amount);
-
-    void removeMoney(double amount);
 
 }

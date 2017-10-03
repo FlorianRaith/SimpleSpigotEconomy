@@ -18,7 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class AccountManagerImpl implements AccountManager {
 
@@ -26,10 +25,8 @@ public final class AccountManagerImpl implements AccountManager {
     private final TransactionManager transactionManager;
     private final BankFetcher bankFetcher;
     private final ModelCache cache;
-    private final Plugin plugin;
 
     public AccountManagerImpl(Plugin plugin, AccountFetcher accountFetcher, TransactionManager transactionManager, BankFetcher bankFetcher, ModelCache cache) {
-        this.plugin = plugin;
         this.accountFetcher = accountFetcher;
         this.transactionManager = transactionManager;
         this.bankFetcher = bankFetcher;

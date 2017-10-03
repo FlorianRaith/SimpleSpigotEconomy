@@ -9,14 +9,10 @@ public interface Account extends MMApiModel {
 
     double getBalance();
 
-    void setBalance(double balance);
-
     UUID getOwner();
 
     int getTransactionsAmount();
 
     Set<Integer> getTransactionIDs();
-
-    void addTransaction(Transaction transaction);
 
 }

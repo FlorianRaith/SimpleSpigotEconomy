@@ -7,6 +7,7 @@ import me.dirantos.moneymaker.api.managers.BankManager;
 import me.dirantos.moneymaker.api.models.Account;
 import me.dirantos.moneymaker.api.models.Bank;
 import me.dirantos.moneymaker.api.events.AsyncBankUpdateEvent;
+import me.dirantos.moneymaker.spigot.models.BankImpl;
 import me.dirantos.moneymaker.spigot.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -40,7 +41,7 @@ public class BankManagerImpl implements BankManager {
 
     @Override
     public void setBalance(Bank bank, double amount) {
-        bank.setMoney(amount);
+        ((BankImpl) bank).setMoney(amount);
         bankFetcher.saveData(bank);
         Set<Account> accounts = loadAccounts(bank);
         Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, accounts));
