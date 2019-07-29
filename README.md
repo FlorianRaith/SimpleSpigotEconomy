@@ -1,6 +1,6 @@
-# MoneyMaker
+# Economy
 
-A testplugin for the rewinside-server by Dirantos for _Spigot 1.8_  
+A simple economy plugin for _Spigot 1.8_
 The plugin provides an API with which you can handle several operations like
 creating accounts or making transactions
 
@@ -11,7 +11,7 @@ After you installed the repository on your local computer with `mvn install` you
 
     <dependency>
         <groupId>me.dirantos</groupId>
-        <artifactId>MoneyMakerAPI</artifactId>
+        <artifactId>EconomyAPI</artifactId>
         <version>1.0-SNAPSHOT</version>
         <scope>compile</scope>
     </dependency>
@@ -19,17 +19,17 @@ After you installed the repository on your local computer with `mvn install` you
 Next you have to depend the Plugin in your plugin.yml:
 
     ...
-    depend: [MoneyMaker]
+    depend: [Economy]
     
 ### Using the API
 
-To get an instance of the API you have to call `MoneyMakerAPI.getService()`
+To get an instance of the API you have to call `Bukkit.getServicesManager().load(EconomyService.class)`
 
-    public class MMTestPlugin extends JavaPlugin {
+    public class EconomyTestPlugin extends JavaPlugin {
       
         @Override
         public void onEnable() {
-            MoneyMakerAPIService apiService = MoneyMakerAPI.getService();
+            EconomyService economyService = Bukkit.getServicesManager().load(EconomyService.class);
         }
         
     }
@@ -39,19 +39,19 @@ From the ApiService you can get several Managers with which you can handle diffe
     @Override
     public void onEnable() {
         
-        MoneyMakerAPIService apiService = MoneyMakerAPI.getService();
+        EconomyService economyService = Bukkit.getServicesManager().load(EconomyService.class);
         
-        BankManager bankManager = apiService.getBankManager();
-        TransactionManager transactionManager = apiService.getTransactionManager();
-        AccountManager accountManager = apiService.getAccountManager();
+        BankManager bankManager = economyService.getBankManager();
+        TransactionManager transactionManager = economyService.getTransactionManager();
+        AccountManager accountManager = economyService.getAccountManager();
         
     }
     
 Every method in one of the managers-class should be called asynchronously.  
 In the following example an account will be created and a deposit-transaction will be made to the account:
 
-    AccountManager accountManager = MoneyMakerAPI.getService().getAccountManager();
-    TransactionManager transactionManager = MoneyMakerAPI.getService().getTransactionManager();
+    AccountManager accountManager = economyService.getAccountManager();
+    TransactionManager transactionManager = economyService.getTransactionManager();
       
     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
         

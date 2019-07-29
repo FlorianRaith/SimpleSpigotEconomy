@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.dirantos</groupId>
-    <artifactId>MoneyMaker-repo</artifactId>
+    <artifactId>Economy-repo</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>

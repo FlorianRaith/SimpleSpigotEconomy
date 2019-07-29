@@ -1,7 +1,7 @@
-name: MoneyMaker
+name: Economy
 version: 1.0
 author: Dirantos
-main: me.dirantos.moneymaker.spigot.MoneyMakerPlugin
+main: me.dirantos.economy.spigot.EconomyPlugin
 
 commands:
   account:
