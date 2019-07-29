@@ -1,11 +1,11 @@
 package me.dirantos.economy.spigot;
 
-import me.dirantos.economy.api.managers.BankManager;
-import me.dirantos.economy.api.managers.TransactionManager;
-import me.dirantos.economy.api.models.Account;
-import me.dirantos.economy.components.chat.ChatLevel;
-import me.dirantos.economy.components.chat.ChatMessenger;
-import me.dirantos.economy.spigot.configs.InterestConfig;
+import me.dirantos.economy.api.bank.BankManager;
+import me.dirantos.economy.api.transaction.TransactionManager;
+import me.dirantos.economy.api.account.Account;
+import me.dirantos.economy.spigot.chat.ChatLevel;
+import me.dirantos.economy.spigot.chat.ChatMessenger;
+import me.dirantos.economy.spigot.config.InterestConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

@@ -1,32 +1,27 @@
 package me.dirantos.economy.spigot;
 
-import me.dirantos.economy.api.cache.ModelCache;
-import me.dirantos.economy.api.fetchers.AccountFetcher;
-import me.dirantos.economy.api.fetchers.BankFetcher;
-import me.dirantos.economy.api.fetchers.TransactionFetcher;
-import me.dirantos.economy.api.managers.AccountManager;
-import me.dirantos.economy.api.managers.BankManager;
-import me.dirantos.economy.api.managers.TransactionManager;
-import me.dirantos.economy.api.service.EconomyService;
-import me.dirantos.economy.components.chat.ChatMessenger;
-import me.dirantos.economy.components.command.Command;
-import me.dirantos.economy.spigot.bank.BankOpenListener;
-import me.dirantos.economy.spigot.commands.*;
-import me.dirantos.economy.components.config.ConfigFile;
-import me.dirantos.economy.spigot.configs.InterestConfig;
-import me.dirantos.economy.spigot.configs.MessageConfig;
-import me.dirantos.economy.spigot.configs.MysqlConnectionConfig;
-import me.dirantos.economy.spigot.configs.RewardConfig;
-import me.dirantos.economy.spigot.fetchers.AccountFetcherImpl;
-import me.dirantos.economy.spigot.fetchers.BankFetcherImpl;
-import me.dirantos.economy.spigot.fetchers.TransactionFetcherImpl;
-import me.dirantos.economy.spigot.listeners.BlockClickListener;
-import me.dirantos.economy.spigot.listeners.BankUpdateListener;
-import me.dirantos.economy.spigot.listeners.RewardListener;
-import me.dirantos.economy.spigot.managers.AccountManagerImpl;
-import me.dirantos.economy.spigot.managers.BankManagerImpl;
-import me.dirantos.economy.spigot.managers.TransactionManagerImpl;
-import me.dirantos.economy.spigot.mysql.MySQLConnectionPool;
+import me.dirantos.economy.api.account.AccountFetcher;
+import me.dirantos.economy.api.bank.BankFetcher;
+import me.dirantos.economy.api.transaction.TransactionFetcher;
+import me.dirantos.economy.api.account.AccountManager;
+import me.dirantos.economy.api.bank.BankManager;
+import me.dirantos.economy.api.transaction.TransactionManager;
+import me.dirantos.economy.api.EconomyService;
+import me.dirantos.economy.spigot.chat.ChatMessenger;
+import me.dirantos.economy.spigot.command.*;
+import me.dirantos.economy.spigot.bank.inventory.BankOpenListener;
+import me.dirantos.economy.spigot.config.ConfigFile;
+import me.dirantos.economy.spigot.config.InterestConfig;
+import me.dirantos.economy.spigot.config.MessageConfig;
+import me.dirantos.economy.spigot.config.MysqlConnectionConfig;
+import me.dirantos.economy.spigot.config.RewardConfig;
+import me.dirantos.economy.spigot.account.AccountFetcherImpl;
+import me.dirantos.economy.spigot.bank.BankFetcherImpl;
+import me.dirantos.economy.spigot.transaction.TransactionFetcherImpl;
+import me.dirantos.economy.spigot.bank.BankUpdateListener;
+import me.dirantos.economy.spigot.account.AccountManagerImpl;
+import me.dirantos.economy.spigot.bank.BankManagerImpl;
+import me.dirantos.economy.spigot.transaction.TransactionManagerImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -65,8 +60,7 @@ public final class EconomyPlugin extends JavaPlugin {
                 transactionFetcher,
                 transactionManager,
                 accountManager,
-                bankManager,
-                cache
+                bankManager
         );
 
         saveConfig();

@@ -1,13 +1,12 @@
 package me.dirantos.economy.spigot;
 
-import me.dirantos.economy.api.cache.ModelCache;
-import me.dirantos.economy.api.fetchers.AccountFetcher;
-import me.dirantos.economy.api.fetchers.BankFetcher;
-import me.dirantos.economy.api.fetchers.TransactionFetcher;
-import me.dirantos.economy.api.managers.AccountManager;
-import me.dirantos.economy.api.managers.BankManager;
-import me.dirantos.economy.api.managers.TransactionManager;
-import me.dirantos.economy.api.service.EconomyService;
+import me.dirantos.economy.api.account.AccountFetcher;
+import me.dirantos.economy.api.bank.BankFetcher;
+import me.dirantos.economy.api.transaction.TransactionFetcher;
+import me.dirantos.economy.api.account.AccountManager;
+import me.dirantos.economy.api.bank.BankManager;
+import me.dirantos.economy.api.transaction.TransactionManager;
+import me.dirantos.economy.api.EconomyService;
 
 public final class EconomyServiceImpl implements EconomyService {
 
@@ -17,16 +16,14 @@ public final class EconomyServiceImpl implements EconomyService {
     private final TransactionManager transactionManager;
     private final AccountManager accountManager;
     private final BankManager bankManager;
-    private final ModelCache cache;
 
-    public EconomyServiceImpl(AccountFetcher accountFetcher, BankFetcher bankFetcher, TransactionFetcher transactionFetcher, TransactionManager transactionManager, AccountManager accountManager, BankManager bankManager, ModelCache cache) {
+    public EconomyServiceImpl(AccountFetcher accountFetcher, BankFetcher bankFetcher, TransactionFetcher transactionFetcher, TransactionManager transactionManager, AccountManager accountManager, BankManager bankManager) {
         this.accountFetcher = accountFetcher;
         this.bankFetcher = bankFetcher;
         this.transactionFetcher = transactionFetcher;
         this.transactionManager = transactionManager;
         this.accountManager = accountManager;
         this.bankManager = bankManager;
-        this.cache = cache;
     }
 
     @Override
@@ -57,11 +54,6 @@ public final class EconomyServiceImpl implements EconomyService {
     @Override
     public BankManager getBankManager() {
         return bankManager;
-    }
-
-    @Override
-    public ModelCache getCache() {
-        return cache;
     }
 
 }
