@@ -3,16 +3,20 @@ package me.dirantos.economy.spigot;
 import me.dirantos.economy.api.EconomyRepository;
 import me.dirantos.economy.api.EconomyService;
 import me.dirantos.economy.api.account.Account;
+import me.dirantos.economy.api.account.AsyncAccountCreateEvent;
+import me.dirantos.economy.api.account.AsyncAccountDeleteEvent;
+import me.dirantos.economy.api.account.AsyncAccountUpdateEvent;
+import me.dirantos.economy.api.bank.AsyncBankCreateEvent;
+import me.dirantos.economy.api.bank.AsyncBankDeleteEvent;
+import me.dirantos.economy.api.bank.AsyncBankUpdateEvent;
 import me.dirantos.economy.api.bank.Bank;
-import me.dirantos.economy.api.transaction.Interest;
-import me.dirantos.economy.api.transaction.Transaction;
-import me.dirantos.economy.api.transaction.TransactionType;
-import me.dirantos.economy.api.transaction.Transfer;
+import me.dirantos.economy.api.transaction.*;
 import me.dirantos.economy.spigot.account.AccountImpl;
 import me.dirantos.economy.spigot.bank.BankImpl;
 import me.dirantos.economy.spigot.transaction.InterestImpl;
 import me.dirantos.economy.spigot.transaction.TransactionImpl;
 import me.dirantos.economy.spigot.transaction.TransferImpl;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Date;
@@ -38,7 +42,14 @@ public final class EconomyServiceImpl implements EconomyService {
     @Override
     public Bank loadBank(UUID player) {
         Optional<Bank> bank = repository.findBank(player);
-        return bank.orElseGet(() -> repository.createBank(player));
+
+        if(!bank.isPresent())  {
+            Bank createdBank = repository.createBank(player);
+            Bukkit.getPluginManager().callEvent(new AsyncBankCreateEvent(createdBank));
+            return createdBank;
+        }
+
+        return bank.get();
     }
 
     @Override
@@ -58,8 +69,10 @@ public final class EconomyServiceImpl implements EconomyService {
 
     @Override
     public void setWalletBalance(Bank bank, double amount) {
+        double oldBalance = bank.getWalletBalance();
         ((BankImpl) bank).setWalletBalance(amount);
         repository.updateBank(bank);
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, oldBalance, amount));
     }
 
     @Override
@@ -94,6 +107,7 @@ public final class EconomyServiceImpl implements EconomyService {
 
     @Override
     public void deleteBank(UUID player) {
+        Bukkit.getPluginManager().callEvent(new AsyncBankDeleteEvent(player));
         repository.deleteBank(player);
     }
 
@@ -109,7 +123,9 @@ public final class EconomyServiceImpl implements EconomyService {
 
     @Override
     public Account createNewAccount(UUID player, double startBalance) {
-        return repository.createAccount(player, startBalance);
+        Account account = repository.createAccount(player, startBalance);
+        Bukkit.getPluginManager().callEvent(new AsyncAccountCreateEvent(account));
+        return account;
     }
 
     @Override
@@ -157,6 +173,7 @@ public final class EconomyServiceImpl implements EconomyService {
 
     @Override
     public void deleteAccount(int accountID) {
+        Bukkit.getPluginManager().callEvent(new AsyncAccountDeleteEvent(accountID));
         repository.deleteAccount(accountID);
     }
 
@@ -175,15 +192,24 @@ public final class EconomyServiceImpl implements EconomyService {
     public Transfer transfer(Account sender, Account recipient, double amount) {
         checkNotNull(sender, "The sender must not be null");
         checkNotNull(recipient, "The recipient must not be null");
-        checkArgument(sender.getBalance() - amount > 0, String.format("The sender's account balance (%s) must be higher than the transfer amount (%s)", sender.getBalance(), amount));
+        checkArgument(sender.getBalance() - amount >= 0, String.format("The sender's account balance (%s) must be higher than the transfer amount (%s)", sender.getBalance(), amount));
 
         Transfer senderTransfer = new TransferImpl(0, sender.getID(), amount, new Date(), sender.getID(), recipient.getID());
         Transfer recipientTransfer = new TransferImpl(0, recipient.getID(), amount, new Date(), sender.getID(), recipient.getID());
+
+        double oldSenderBalance = sender.getBalance();
+        double oldRecipientBalance = recipient.getBalance();
 
         ((AccountImpl) sender).setBalance(sender.getBalance() - amount);
         ((AccountImpl) recipient).setBalance(recipient.getBalance() + amount);
 
         repository.saveTransfer(senderTransfer, recipientTransfer, sender, recipient);
+
+        Bukkit.getPluginManager().callEvent(new AsyncTransactionEvent(senderTransfer, sender, recipient, sender));
+        Bukkit.getPluginManager().callEvent(new AsyncTransactionEvent(recipientTransfer, recipient, recipient, sender));
+        Bukkit.getPluginManager().callEvent(new AsyncAccountUpdateEvent(sender, oldSenderBalance, sender.getBalance()));
+        Bukkit.getPluginManager().callEvent(new AsyncAccountUpdateEvent(recipient, oldRecipientBalance, recipient.getBalance()));
+
         return senderTransfer;
     }
 
@@ -200,9 +226,14 @@ public final class EconomyServiceImpl implements EconomyService {
 
         double amount = recipient.getBalance() * interestRate;
         Interest interest = new InterestImpl(0, recipient.getID(), amount, new Date(), interestRate);
+        double oldBalance = recipient.getBalance();
         ((AccountImpl) recipient).setBalance(recipient.getBalance() + amount);
 
         repository.saveInterest(interest, recipient);
+
+        Bukkit.getPluginManager().callEvent(new AsyncTransactionEvent(interest, recipient));
+        Bukkit.getPluginManager().callEvent(new AsyncAccountUpdateEvent(recipient, oldBalance, recipient.getBalance()));
+
         return interest;
     }
 
@@ -228,13 +259,20 @@ public final class EconomyServiceImpl implements EconomyService {
     @Override
     public Transaction withdrawal(Bank bank, Account recipient, double amount) {
         checkNotNull(recipient, "The recipient must not be null");
-        checkArgument(recipient.getBalance() - amount > 0, String.format("The recipient's account balance (%s) must be equal to or higher than the withdrawal amount (%s)", recipient.getBalance(), amount));
+        checkArgument(recipient.getBalance() - amount >= 0, String.format("The recipient's account balance (%s) must be equal to or higher than the withdrawal amount (%s)", recipient.getBalance(), amount));
 
+        double oldWalletBalance = bank.getWalletBalance();
         ((BankImpl) bank).setWalletBalance(bank.getWalletBalance() + amount);
+        ((BankImpl) bank).setBankBalance(bank.getBankBalance() - amount);
+        double oldAccountBalance = recipient.getBalance();
         ((AccountImpl) recipient).setBalance(recipient.getBalance() - amount);
         Transaction transaction = new TransactionImpl(0, recipient.getID(), amount, new Date(), TransactionType.WITHDRAWAL);
 
         repository.saveTransaction(bank, transaction, recipient);
+
+        Bukkit.getPluginManager().callEvent(new AsyncTransactionEvent(transaction, recipient));
+        Bukkit.getPluginManager().callEvent(new AsyncAccountUpdateEvent(recipient, oldAccountBalance, recipient.getBalance()));
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, oldWalletBalance, bank.getWalletBalance()));
 
         return transaction;
     }
@@ -261,13 +299,20 @@ public final class EconomyServiceImpl implements EconomyService {
     @Override
     public Transaction deposit(Bank bank, Account recipient, double amount) {
         checkNotNull(recipient, "The recipient must not be null");
-        checkArgument(bank.getWalletBalance() - amount > 0, String.format("The recipient's wallet balance (%s) must be equal to or higher than the withdrawal amount (%s)", bank.getWalletBalance(), amount));
+        checkArgument(bank.getWalletBalance() - amount >= 0, String.format("The recipient's wallet balance (%s) must be equal to or higher than the withdrawal amount (%s)", bank.getWalletBalance(), amount));
 
+        double oldWalletBalance = bank.getWalletBalance();
         ((BankImpl) bank).setWalletBalance(bank.getWalletBalance() - amount);
+        ((BankImpl) bank).setBankBalance(bank.getBankBalance() + amount);
+        double oldAccountBalance = recipient.getBalance();
         ((AccountImpl) recipient).setBalance(recipient.getBalance() + amount);
         Transaction transaction = new TransactionImpl(0, recipient.getID(), amount, new Date(), TransactionType.DEPOSIT);
 
         repository.saveTransaction(bank, transaction, recipient);
+
+        Bukkit.getPluginManager().callEvent(new AsyncTransactionEvent(transaction, recipient));
+        Bukkit.getPluginManager().callEvent(new AsyncAccountUpdateEvent(recipient, oldAccountBalance, recipient.getBalance()));
+        Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, oldWalletBalance, bank.getWalletBalance()));
 
         return transaction;
     }

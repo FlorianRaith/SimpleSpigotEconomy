@@ -10,19 +10,19 @@ public class AsyncAccountDeleteEvent extends Event {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private final Account account;
+    private final int accountID;
 
-    public AsyncAccountDeleteEvent(Account account) {
+    public AsyncAccountDeleteEvent(int accountID) {
         super(true);
-        this.account = account;
-    }
-
-    public Account getAccount() {
-        return account;
+        this.accountID = accountID;
     }
 
     public static HandlerList getHandlerList() {
         return HANDLER_LIST;
+    }
+
+    public int getAccountID() {
+        return accountID;
     }
 
     @Override

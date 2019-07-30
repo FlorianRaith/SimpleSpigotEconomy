@@ -1,33 +1,30 @@
-package me.dirantos.economy.api.account;
+package me.dirantos.economy.api.bank;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-/**
- * This event gets called when an account gets created
- */
-public class AsyncAccountCreateEvent extends Event {
+import java.util.UUID;
 
+public class AsyncBankDeleteEvent extends Event {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private final Account account;
+    private final UUID owner;
 
-    public AsyncAccountCreateEvent(Account account) {
+    public AsyncBankDeleteEvent(UUID bank) {
         super(true);
-        this.account = account;
+        this.owner = bank;
     }
 
     public static HandlerList getHandlerList() {
         return HANDLER_LIST;
     }
 
-    public Account getAccount() {
-        return account;
+    public UUID getOwner() {
+        return owner;
     }
 
     @Override
     public HandlerList getHandlers() {
         return HANDLER_LIST;
     }
-
 }

@@ -28,8 +28,9 @@ final class SQLUtils {
             if(connection != null) connection.rollback(); // rollback transactions
             throw throwable;
         } finally {
-            if(connection != null && autoCommit) {
-                connection.setAutoCommit(true); // reset auto commit
+            if(connection != null) {
+                if(autoCommit) connection.setAutoCommit(true); // reset auto commit
+                connection.close();
             }
         }
 

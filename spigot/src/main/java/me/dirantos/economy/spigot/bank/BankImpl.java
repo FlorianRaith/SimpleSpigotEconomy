@@ -2,14 +2,13 @@ package me.dirantos.economy.spigot.bank;
 
 import me.dirantos.economy.api.bank.Bank;
 
-import java.util.List;
 import java.util.UUID;
 
 public final class BankImpl implements Bank {
 
     private final UUID owner;
     private double walletBalance;
-    private final double bankBalance;
+    private double bankBalance;
 
     public BankImpl(UUID owner, double walletBalance, double bankBalance) {
         this.owner = owner;
@@ -34,6 +33,10 @@ public final class BankImpl implements Bank {
     @Override
     public double getBankBalance() {
         return bankBalance;
+    }
+
+    public void setBankBalance(double bankBalance) {
+        this.bankBalance = bankBalance;
     }
 
     @Override

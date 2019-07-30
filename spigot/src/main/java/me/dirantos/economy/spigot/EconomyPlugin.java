@@ -79,10 +79,7 @@ public final class EconomyPlugin extends JavaPlugin {
                 return;
             }
 
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                Bank bank = service.loadBank(player);
-                Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank));
-            }
+            Bukkit.getOnlinePlayers().forEach(service::loadBank);
         });
 
     }

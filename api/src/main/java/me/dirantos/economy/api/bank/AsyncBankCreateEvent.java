@@ -1,33 +1,32 @@
-package me.dirantos.economy.api.account;
+package me.dirantos.economy.api.bank;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * This event gets called when an account gets created
+ * This event gets called when a bank got created and saved into the database
  */
-public class AsyncAccountCreateEvent extends Event {
+public class AsyncBankCreateEvent extends Event {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private final Account account;
+    private final Bank bank;
 
-    public AsyncAccountCreateEvent(Account account) {
+    public AsyncBankCreateEvent(Bank bank) {
         super(true);
-        this.account = account;
+        this.bank = bank;
     }
 
     public static HandlerList getHandlerList() {
         return HANDLER_LIST;
     }
 
-    public Account getAccount() {
-        return account;
+    public Bank getBank() {
+        return bank;
     }
 
     @Override
     public HandlerList getHandlers() {
         return HANDLER_LIST;
     }
-
 }

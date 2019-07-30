@@ -1,6 +1,7 @@
 package me.dirantos.economy.spigot.bank;
 
 import me.dirantos.economy.api.EconomyService;
+import me.dirantos.economy.api.account.AsyncAccountUpdateEvent;
 import me.dirantos.economy.api.bank.AsyncBankUpdateEvent;
 import me.dirantos.economy.api.bank.Bank;
 import me.dirantos.economy.spigot.EconomyPlugin;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 
@@ -35,19 +37,36 @@ public class BankUpdateListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         sidebars.put(event.getPlayer(), new Sidebar(DISPLAY_NAME));
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            Bank bank = economyService.loadBank(event.getPlayer());
-            Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank));
-        });
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> economyService.loadBank(event.getPlayer()));
     }
 
     @EventHandler
-    public void onUpdate(AsyncBankUpdateEvent event) {
+    public void onQuit(PlayerQuitEvent event) {
+        sidebars.remove(event.getPlayer());
+    }
+
+
+    @EventHandler
+    public void onBankUpdate(AsyncBankUpdateEvent event) {
         Player player = Bukkit.getPlayer(event.getBank().getOwner());
         if(player == null) return;
 
         Bank bank = event.getBank();
+        updateSidebar(player, bank);
+    }
+
+    @EventHandler
+    public void onAccountUpdate(AsyncAccountUpdateEvent event) {
+        Player player = Bukkit.getPlayer(event.getAccount().getOwner());
+        if(player == null) return;
+
+        Bank bank = economyService.loadBank(event.getAccount().getOwner());
+        ((BankImpl) bank).setBankBalance(bank.getBankBalance() + (event.getNewAmount() - event.getOldAmount()));
+
+        updateSidebar(player, bank);
+    }
+
+    private void updateSidebar(Player player, Bank bank) {
         Sidebar sidebar = sidebars.get(player);
 
         List<String> lines = new ArrayList<>(Arrays.asList("",
