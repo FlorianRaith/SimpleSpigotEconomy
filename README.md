@@ -5,7 +5,7 @@ The plugin provides an API with which you can handle several operations like cre
 
 Every five minutes all players will get 5% interest to all their accounts.
 Players who kill monsters and feed animals are being rewarded, however players who kill animals and eat meat will lose money from their wallet.
-A config will be auto generated when the plugin starts and there isn't already a config
+A config will be auto generated when the plugin starts if there isn't already a config
 
 ### Commands
 
