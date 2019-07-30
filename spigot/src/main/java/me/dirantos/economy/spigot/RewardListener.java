@@ -1,8 +1,7 @@
 package me.dirantos.economy.spigot;
 
-import me.dirantos.economy.api.bank.BankManager;
+import me.dirantos.economy.api.EconomyService;
 import me.dirantos.economy.api.bank.Bank;
-import me.dirantos.economy.spigot.EconomyPlugin;
 import me.dirantos.economy.spigot.chat.ChatLevel;
 import me.dirantos.economy.spigot.chat.ChatMessenger;
 import me.dirantos.economy.spigot.config.RewardConfig;
@@ -46,14 +45,13 @@ public class RewardListener implements Listener {
     private final EconomyPlugin plugin;
     private final RewardConfig rewardConfig;
     private final ChatMessenger messenger;
-    private final BankManager bankManager;
+    private final EconomyService economyService;
 
-    public RewardListener(EconomyPlugin plugin, RewardConfig rewardConfig, BankManager bankManager) {
+    public RewardListener(EconomyPlugin plugin, RewardConfig rewardConfig, EconomyService economyService) {
         this.plugin = plugin;
         this.rewardConfig = rewardConfig;
         this.messenger = plugin.getChatMessenger();
-        this.bankManager = bankManager;
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+        this.economyService = economyService;
     }
 
     @EventHandler
@@ -95,10 +93,10 @@ public class RewardListener implements Listener {
 
     private void reward(Player player, double reward) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            Bank bank = bankManager.loadBank(player);
-            double newMoney = bank.getMoney() + reward;
+            Bank bank = economyService.loadBank(player);
+            double newMoney = bank.getWalletBalance() + reward;
             if(newMoney < 0) newMoney = 0;
-            bankManager.setBalance(bank, newMoney);
+            economyService.setWalletBalance(player, newMoney);
 
             String s = reward < 0 ? "abgezogen" : "gutgeschrieben";
             ChatLevel level = reward < 0 ? ChatLevel.ERROR : ChatLevel.SUCCESS;

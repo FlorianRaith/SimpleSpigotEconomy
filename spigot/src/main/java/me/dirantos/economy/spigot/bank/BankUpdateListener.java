@@ -1,12 +1,11 @@
 package me.dirantos.economy.spigot.bank;
 
-import me.dirantos.economy.api.bank.BankManager;
-import me.dirantos.economy.api.account.Account;
+import me.dirantos.economy.api.EconomyService;
+import me.dirantos.economy.api.bank.AsyncBankUpdateEvent;
 import me.dirantos.economy.api.bank.Bank;
 import me.dirantos.economy.spigot.EconomyPlugin;
-import me.dirantos.economy.api.bank.AsyncBankUpdateEvent;
-import me.dirantos.economy.spigot.sidebar.Sidebar;
 import me.dirantos.economy.spigot.Utils;
+import me.dirantos.economy.spigot.sidebar.Sidebar;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -22,22 +21,14 @@ public class BankUpdateListener implements Listener {
 
     private final Map<Player, Sidebar> sidebars = new HashMap<>();
     private final EconomyPlugin plugin;
-    private final BankManager bankManager;
+    private final EconomyService economyService;
 
-    public BankUpdateListener(EconomyPlugin plugin, BankManager bankManager) {
+    public BankUpdateListener(EconomyPlugin plugin, EconomyService economyService) {
         this.plugin = plugin;
-        this.bankManager = bankManager;
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+        this.economyService = economyService;
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             sidebars.put(player, new Sidebar(DISPLAY_NAME));
-        }
-    }
-
-    public void loadBanks() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            Bank bank = bankManager.loadBank(player);
-            Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, bankManager.loadAccounts(bank)));
         }
     }
 
@@ -46,8 +37,8 @@ public class BankUpdateListener implements Listener {
         sidebars.put(event.getPlayer(), new Sidebar(DISPLAY_NAME));
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            Bank bank = bankManager.loadBank(event.getPlayer());
-            Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank, bankManager.loadAccounts(bank)));
+            Bank bank = economyService.loadBank(event.getPlayer());
+            Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank));
         });
     }
 
@@ -56,24 +47,14 @@ public class BankUpdateListener implements Listener {
         Player player = Bukkit.getPlayer(event.getBank().getOwner());
         if(player == null) return;
 
+        Bank bank = event.getBank();
         Sidebar sidebar = sidebars.get(player);
-        List<String> lines = new ArrayList<>();
 
-        lines.addAll(Arrays.asList("",
-                ChatColor.GREEN +  "Bank balance: " + ChatColor.RESET + Utils.formatMoney(event.getBank().getMoney()), "",
-                ChatColor.GREEN + "Your accounts: "));
-
-        event.getAccounts().stream()
-                .sorted(Comparator.comparingInt(Account::getAccountNumber))
-                .map(Account::getAccountNumber).map(i -> ChatColor.GRAY + "- " + ChatColor.RESET + i)
-                .forEach(lines::add);
-
-        double totalBalance = 0;
-        for (Account account : event.getAccounts()) {
-            totalBalance += account.getBalance();
-        }
-
-        lines.addAll(Arrays.asList("", ChatColor.GREEN + "Account balance: " + ChatColor.RESET + Utils.formatMoney(totalBalance)));
+        List<String> lines = new ArrayList<>(Arrays.asList("",
+                ChatColor.GREEN + "Wallet balance: " + ChatColor.RESET + Utils.formatMoney(bank.getWalletBalance()),
+                "",
+                ChatColor.GREEN + "Bank balance: " + ChatColor.RESET + Utils.formatMoney(bank.getBankBalance())
+        ));
 
         sidebar.setLines(lines);
         sidebar.display(player);

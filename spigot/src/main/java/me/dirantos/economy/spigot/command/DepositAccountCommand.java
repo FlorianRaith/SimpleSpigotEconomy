@@ -1,15 +1,10 @@
 package me.dirantos.economy.spigot.command;
 
-import me.dirantos.economy.api.account.AccountManager;
-import me.dirantos.economy.api.bank.BankManager;
-import me.dirantos.economy.api.transaction.TransactionManager;
 import me.dirantos.economy.api.account.Account;
 import me.dirantos.economy.api.bank.Bank;
 import me.dirantos.economy.api.transaction.Transaction;
 import me.dirantos.economy.api.EconomyService;
 import me.dirantos.economy.spigot.chat.ChatLevel;
-import me.dirantos.economy.spigot.command.CommandInfo;
-import me.dirantos.economy.spigot.command.SubCommand;
 import me.dirantos.economy.spigot.EconomyPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -48,20 +43,15 @@ public class DepositAccountCommand extends SubCommand {
             return;
         }
 
-        AccountManager accountManager = getEconomyService().getAccountManager();
-        TransactionManager transactionManager = getEconomyService().getTransactionManager();
-        BankManager bankManager = getEconomyService().getBankManager();
-
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
 
-            Bank bank = bankManager.loadBank(((Player) sender));
-            if(bank.getMoney() < amount) {
+            Bank bank = getEconomyService().loadBank(((Player) sender));
+            if(bank.getWalletBalance() < amount) {
                 getMessenger().send(sender, "You have not enough money!", ChatLevel.ERROR);
                 return;
             }
 
-            Optional<Account> account = accountManager.loadAccount(accountNumber);
-
+            Optional<Account> account = getEconomyService().loadAccount(accountNumber);
 
             if(!account.isPresent()) {
                 getMessenger().send(sender, "The account could not be found!", ChatLevel.ERROR);
@@ -73,8 +63,8 @@ public class DepositAccountCommand extends SubCommand {
                 return;
             }
 
-            Transaction transaction = transactionManager.makeDeposit(account.get(), amount);
-            getMessenger().send(sender, "Successfully deposit [[" + transaction.getAmount() + "$]] to __" + transaction.getRecipientAccountNumber() + "__", ChatLevel.SUCCESS);
+            Transaction transaction = getEconomyService().deposit(account.get(), amount);
+            getMessenger().send(sender, "Successfully deposit [[" + transaction.getAmount() + "$]] to account __#" + transaction.getAccountID() + "__", ChatLevel.SUCCESS);
 
         });
 

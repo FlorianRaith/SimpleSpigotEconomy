@@ -22,7 +22,7 @@ public class TransactionInventory extends InventoryPage {
     private final Player player;
 
     public TransactionInventory(Account account, Set<Transaction> transactions, BankInventory bankInventory, InventoryManager inventoryManager, Player player) {
-        super(4, "Transactions - " + account.getAccountNumber(), InventoryBackground.BLACK);
+        super(4, "Transactions - " + account.getID(), InventoryBackground.BLACK);
         this.account = account;
         this.transactions = transactions;
         this.bankInventory = bankInventory;

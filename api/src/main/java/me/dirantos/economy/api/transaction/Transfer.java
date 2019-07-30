@@ -2,6 +2,8 @@ package me.dirantos.economy.api.transaction;
 
 public interface Transfer extends Transaction {
 
-    int getSenderAccountNumber();
+    int getSenderAccountID();
+
+    int getRecipientAccountID();
 
 }

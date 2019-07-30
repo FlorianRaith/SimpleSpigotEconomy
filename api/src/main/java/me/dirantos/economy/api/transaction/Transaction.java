@@ -1,14 +1,12 @@
 package me.dirantos.economy.api.transaction;
 
-import me.dirantos.economy.api.DataModel;
-
 import java.util.Date;
 
-public interface Transaction extends DataModel {
+public interface Transaction {
 
     int getID();
 
-    int getRecipientAccountNumber();
+    int getAccountID();
 
     double getAmount();
 

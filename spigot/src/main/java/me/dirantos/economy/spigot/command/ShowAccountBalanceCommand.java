@@ -1,11 +1,10 @@
 package me.dirantos.economy.spigot.command;
 
-import me.dirantos.economy.api.account.AccountManager;
-import me.dirantos.economy.api.account.Account;
 import me.dirantos.economy.api.EconomyService;
-import me.dirantos.economy.spigot.chat.ChatLevel;
+import me.dirantos.economy.api.account.Account;
 import me.dirantos.economy.spigot.EconomyPlugin;
 import me.dirantos.economy.spigot.Utils;
+import me.dirantos.economy.spigot.chat.ChatLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,9 +33,8 @@ public class ShowAccountBalanceCommand extends SubCommand{
             return;
         }
 
-        AccountManager accountManager = getEconomyService().getAccountManager();
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            Optional<Account> account = accountManager.loadAccount(accountNumber);
+            Optional<Account> account = getEconomyService().loadAccount(accountNumber);
 
             if(!account.isPresent()) {
                 getMessenger().send(sender, "The account could not be found!", ChatLevel.ERROR);
@@ -51,7 +49,6 @@ public class ShowAccountBalanceCommand extends SubCommand{
 
             double balance = account.get().getBalance();
             getMessenger().send(sender, "The account __" + accountNumber + "__ has [[" + Utils.formatMoney(balance) + "]]!", ChatLevel.SUCCESS);
-
         });
     }
 

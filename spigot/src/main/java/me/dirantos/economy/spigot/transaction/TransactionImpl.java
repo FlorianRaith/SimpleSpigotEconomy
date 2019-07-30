@@ -8,20 +8,20 @@ import java.util.Date;
 public class TransactionImpl implements Transaction {
 
     private int id;
-    private final int recipientAccountNumber;
+    private final int accountID;
     private final double amount;
     private final Date date;
     private final TransactionType type;
 
-    public TransactionImpl(int id, int recipientAccountNumber, double amount, Date date, TransactionType type) {
+    public TransactionImpl(int id, int accountID, double amount, Date date, TransactionType type) {
         this.id = id;
-        this.recipientAccountNumber = recipientAccountNumber;
+        this.accountID = accountID;
         this.amount = amount;
         this.date = date;
         this.type = type;
     }
 
-    public void setId(int id) {
+    public void setID(int id) {
         this.id = id;
     }
 
@@ -31,8 +31,8 @@ public class TransactionImpl implements Transaction {
     }
 
     @Override
-    public int getRecipientAccountNumber() {
-        return recipientAccountNumber;
+    public int getAccountID() {
+        return accountID;
     }
 
     @Override
@@ -54,7 +54,6 @@ public class TransactionImpl implements Transaction {
     public String toString() {
         return "TransactionImpl{" +
                 "id=" + id +
-                ", recipientAccountNumber=" + recipientAccountNumber +
                 ", amount=" + amount +
                 ", date=" + date +
                 ", type=" + type +

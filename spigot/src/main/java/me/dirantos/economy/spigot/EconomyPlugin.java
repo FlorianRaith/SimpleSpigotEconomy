@@ -1,30 +1,23 @@
 package me.dirantos.economy.spigot;
 
-import me.dirantos.economy.api.account.AccountFetcher;
-import me.dirantos.economy.api.bank.BankFetcher;
-import me.dirantos.economy.api.transaction.TransactionFetcher;
-import me.dirantos.economy.api.account.AccountManager;
-import me.dirantos.economy.api.bank.BankManager;
-import me.dirantos.economy.api.transaction.TransactionManager;
+import me.dirantos.economy.api.EconomyRepository;
 import me.dirantos.economy.api.EconomyService;
+import me.dirantos.economy.api.bank.AsyncBankUpdateEvent;
+import me.dirantos.economy.api.bank.Bank;
+import me.dirantos.economy.spigot.bank.BankUpdateListener;
+import me.dirantos.economy.spigot.bank.inventory.BankOpenListener;
 import me.dirantos.economy.spigot.chat.ChatMessenger;
 import me.dirantos.economy.spigot.command.*;
-import me.dirantos.economy.spigot.bank.inventory.BankOpenListener;
-import me.dirantos.economy.spigot.config.ConfigFile;
-import me.dirantos.economy.spigot.config.InterestConfig;
-import me.dirantos.economy.spigot.config.MessageConfig;
-import me.dirantos.economy.spigot.config.MysqlConnectionConfig;
-import me.dirantos.economy.spigot.config.RewardConfig;
-import me.dirantos.economy.spigot.account.AccountFetcherImpl;
-import me.dirantos.economy.spigot.bank.BankFetcherImpl;
-import me.dirantos.economy.spigot.transaction.TransactionFetcherImpl;
-import me.dirantos.economy.spigot.bank.BankUpdateListener;
-import me.dirantos.economy.spigot.account.AccountManagerImpl;
-import me.dirantos.economy.spigot.bank.BankManagerImpl;
-import me.dirantos.economy.spigot.transaction.TransactionManagerImpl;
+import me.dirantos.economy.spigot.config.*;
+import me.dirantos.economy.spigot.repository.EconomyRepositoryImpl;
+import me.dirantos.economy.spigot.repository.MySQLConnectionPool;
+import me.dirantos.economy.spigot.repository.SQLQueries;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
 
 public final class EconomyPlugin extends JavaPlugin {
 
@@ -43,28 +36,12 @@ public final class EconomyPlugin extends JavaPlugin {
 
         connectionPool = new MySQLConnectionPool(connectionConfig);
 
-        ModelCache cache = new ModelCache();
-
-        BankFetcher bankFetcher = new BankFetcherImpl(connectionPool, this, cache);
-        AccountFetcher accountFetcher = new AccountFetcherImpl(connectionPool, this, cache);
-        TransactionFetcher transactionFetcher = new TransactionFetcherImpl(connectionPool, this, cache);
-
-
-        TransactionManager transactionManager = new TransactionManagerImpl(transactionFetcher, accountFetcher, bankFetcher, cache);
-        AccountManager accountManager = new AccountManagerImpl(this, accountFetcher, transactionManager, bankFetcher, cache);
-        BankManager bankManager = new BankManagerImpl(bankFetcher, accountManager, cache);
-
-        EconomyServiceImpl service = new EconomyServiceImpl(
-                accountFetcher,
-                bankFetcher,
-                transactionFetcher,
-                transactionManager,
-                accountManager,
-                bankManager
-        );
+        SQLQueries sqlQueries = new SQLQueries("banks", "accounts", "transactions");
+        EconomyRepository repository = new EconomyRepositoryImpl(connectionPool, sqlQueries, getLogger());
 
         saveConfig();
 
+        EconomyService service = new EconomyServiceImpl(repository);
         Bukkit.getServicesManager().register(EconomyService.class, service, this, ServicePriority.Normal);
 
         chatMessenger = new ChatMessenger(messageConfig.getPrefix());
@@ -84,21 +61,28 @@ public final class EconomyPlugin extends JavaPlugin {
         bankCommand.addSubCommand(new BankOpenCommand(this, service));
         bankCommand.register();
 
-        BankUpdateListener listener = new BankUpdateListener(this, bankManager);
+        Bukkit.getPluginManager().registerEvents(new BankUpdateListener(this, service), this);
+        Bukkit.getPluginManager().registerEvents(new RewardListener(this, rewardConfig, service), this);
+        Bukkit.getPluginManager().registerEvents(new BlockClickListener(this, service), this);
+        Bukkit.getPluginManager().registerEvents(new BankOpenListener(this, service), this);
 
-
-        new RewardListener(this, rewardConfig, bankManager);
-        new BlockClickListener(this, bankManager);
-        new BankOpenListener(this, accountManager);
-
-        InterestReceiver interestReceiver = new InterestReceiver(this, 20*60*5, interestConfig, bankManager, transactionManager);
+        InterestReceiver interestReceiver = new InterestReceiver(this, 20*60*5, interestConfig, service);
         interestReceiver.start();
 
+
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            bankFetcher.createTableIfNotExists();
-            accountFetcher.createTableIfNotExists();
-            transactionFetcher.createTableIfNotExists();
-            listener.loadBanks();
+            try {
+                repository.initialize();
+            } catch (RuntimeException e) {
+                getLogger().log(Level.SEVERE, "Exception during database initialization", e);
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                Bank bank = service.loadBank(player);
+                Bukkit.getPluginManager().callEvent(new AsyncBankUpdateEvent(bank));
+            }
         });
 
     }
@@ -113,10 +97,5 @@ public final class EconomyPlugin extends JavaPlugin {
     public ChatMessenger getChatMessenger() {
         return chatMessenger;
     }
-
-    public void log(String message) {
-        getLogger().info(message);
-    }
-
 
 }

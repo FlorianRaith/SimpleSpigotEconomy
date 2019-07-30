@@ -1,11 +1,8 @@
 package me.dirantos.economy.spigot.command;
 
-import me.dirantos.economy.api.account.AccountManager;
 import me.dirantos.economy.api.account.Account;
 import me.dirantos.economy.api.EconomyService;
 import me.dirantos.economy.spigot.chat.ChatLevel;
-import me.dirantos.economy.spigot.command.CommandInfo;
-import me.dirantos.economy.spigot.command.SubCommand;
 import me.dirantos.economy.spigot.EconomyPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -27,17 +24,16 @@ public class DeleteAccountCommand extends SubCommand {
             return;
         }
 
-        int accountNumber;
+        int accountID;
         try {
-           accountNumber = Integer.parseInt(args[0]);
+           accountID = Integer.parseInt(args[0]);
         } catch(NumberFormatException e) {
             getMessenger().send(sender, "Wrong arguments!", ChatLevel.ERROR);
             return;
         }
 
-        AccountManager accountManager = getEconomyService().getAccountManager();
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            Optional<Account> account = accountManager.loadAccount(accountNumber);
+            Optional<Account> account = getEconomyService().loadAccount(accountID);
 
             if(!account.isPresent()) {
                 getMessenger().send(sender, "The account could not be found!", ChatLevel.ERROR);
@@ -49,8 +45,8 @@ public class DeleteAccountCommand extends SubCommand {
                 return;
             }
 
-            accountManager.deleteAccount(account.get());
-            getMessenger().send(sender, "The managers __" + accountNumber + "__ has successfully been deleted!", ChatLevel.SUCCESS);
+            getEconomyService().deleteAccount(account.get());
+            getMessenger().send(sender, "The managers __" + accountID + "__ has successfully been deleted!", ChatLevel.SUCCESS);
 
         });
     }

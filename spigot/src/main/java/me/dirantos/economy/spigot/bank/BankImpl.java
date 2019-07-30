@@ -8,13 +8,13 @@ import java.util.UUID;
 public final class BankImpl implements Bank {
 
     private final UUID owner;
-    private final List<Integer> accountNumbers;
-    private double money;
+    private double walletBalance;
+    private final double bankBalance;
 
-    public BankImpl(UUID owner, List<Integer> accountNumbers, double money) {
+    public BankImpl(UUID owner, double walletBalance, double bankBalance) {
         this.owner = owner;
-        this.accountNumbers = accountNumbers;
-        this.money = money;
+        this.walletBalance = walletBalance;
+        this.bankBalance = bankBalance;
     }
 
     @Override
@@ -23,34 +23,25 @@ public final class BankImpl implements Bank {
     }
 
     @Override
-    public List<Integer> getAccountNumbers() {
-        return accountNumbers;
+    public double getWalletBalance() {
+        return walletBalance;
     }
 
-    public void addAccount(int accountNumber) {
-        accountNumbers.add(accountNumber);
-    }
-
-    public void removeAccount(int accountNumber) {
-        accountNumbers.remove(accountNumbers.indexOf(accountNumber));
+    public void setWalletBalance(double walletBalance) {
+        this.walletBalance = walletBalance;
     }
 
     @Override
-    public double getMoney() {
-        return money;
-    }
-
-    public void setMoney(double money) {
-        this.money = money;
+    public double getBankBalance() {
+        return bankBalance;
     }
 
     @Override
     public String toString() {
         return "BankImpl{" +
                 "owner=" + owner +
-                ", accountNumbers=" + accountNumbers +
-                ", money=" + money +
+                ", walletBalance=" + walletBalance +
+                ", bankBalance=" + bankBalance +
                 '}';
     }
-
 }

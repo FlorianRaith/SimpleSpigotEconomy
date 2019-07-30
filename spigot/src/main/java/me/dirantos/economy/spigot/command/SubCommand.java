@@ -34,7 +34,7 @@ public abstract class SubCommand {
         return plugin;
     }
 
-    public EconomyService getEconomyService() {
+    public final EconomyService getEconomyService() {
         return economyService;
     }
 

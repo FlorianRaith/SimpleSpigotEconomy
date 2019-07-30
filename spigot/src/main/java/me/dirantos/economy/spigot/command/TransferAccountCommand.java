@@ -1,13 +1,9 @@
 package me.dirantos.economy.spigot.command;
 
-import me.dirantos.economy.api.account.AccountManager;
-import me.dirantos.economy.api.transaction.TransactionManager;
 import me.dirantos.economy.api.account.Account;
 import me.dirantos.economy.api.transaction.Transfer;
 import me.dirantos.economy.api.EconomyService;
 import me.dirantos.economy.spigot.chat.ChatLevel;
-import me.dirantos.economy.spigot.command.CommandInfo;
-import me.dirantos.economy.spigot.command.SubCommand;
 import me.dirantos.economy.spigot.EconomyPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -53,12 +49,10 @@ public class TransferAccountCommand extends SubCommand {
             return;
         }
 
-        TransactionManager transactionManager = getEconomyService().getTransactionManager();
-        AccountManager accountManager = getEconomyService().getAccountManager();
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
 
-            Optional<Account> ownAccount = accountManager.loadAccount(ownAccountNumber);
-            Optional<Account> otherAccount = accountManager.loadAccount(otherAccountNumber);
+            Optional<Account> ownAccount = getEconomyService().loadAccount(ownAccountNumber);
+            Optional<Account> otherAccount = getEconomyService().loadAccount(otherAccountNumber);
 
             if(!ownAccount.isPresent() || !otherAccount.isPresent()) {
                 getMessenger().send(sender, "accountNumbers are invalid!", ChatLevel.ERROR);
@@ -70,8 +64,8 @@ public class TransferAccountCommand extends SubCommand {
                 return;
             }
 
-            Transfer transfer = transactionManager.makeTransfer(otherAccount.get(), ownAccount.get(), amount);
-            getMessenger().send(sender, "Successfully transfered [[" + transfer.getAmount() + "$]] from __" + transfer.getSenderAccountNumber() + "__ to __" + transfer.getRecipientAccountNumber() + "__", ChatLevel.SUCCESS);
+            Transfer transfer = getEconomyService().transfer(otherAccount.get(), ownAccount.get(), amount);
+            getMessenger().send(sender, "Successfully transfered [[" + transfer.getAmount() + "$]] from account __#" + transfer.getSenderAccountID() + "__ to account __#" + transfer.getRecipientAccountID() + "__", ChatLevel.SUCCESS);
         });
 
 

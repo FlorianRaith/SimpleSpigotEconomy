@@ -1,11 +1,8 @@
 package me.dirantos.economy.spigot.command;
 
-import me.dirantos.economy.api.bank.BankManager;
 import me.dirantos.economy.api.bank.Bank;
 import me.dirantos.economy.api.EconomyService;
 import me.dirantos.economy.spigot.chat.ChatLevel;
-import me.dirantos.economy.spigot.command.CommandInfo;
-import me.dirantos.economy.spigot.command.SubCommand;
 import me.dirantos.economy.spigot.EconomyPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -23,17 +20,12 @@ public class BankShowBalanceCommand extends SubCommand {
 
         Player player = ((Player) sender);
 
-        if(player == null) {
-            getMessenger().send(sender, "The player [[" + args[0] + "]] is not online!", ChatLevel.ERROR);
-            return;
-        }
-
-        BankManager bankManager = getEconomyService().getBankManager();
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            Bank bank = bankManager.loadBank(player.getUniqueId());
-
-            double balance = bank.getMoney();
-            getMessenger().send(sender, "Your current balance is [[" + balance + "$]]!", ChatLevel.SUCCESS);
+            Bank bank = getEconomyService().loadBank(player);
+            double walletBalance = bank.getWalletBalance();
+            double bankBalance = bank.getBankBalance();
+            getMessenger().send(sender, "Your current wallet balance is [[" + walletBalance + "$]]!", ChatLevel.SUCCESS);
+            getMessenger().send(sender, "Your current bank balance is [[" + bankBalance + "$]]!", ChatLevel.SUCCESS);
         });
 
     }

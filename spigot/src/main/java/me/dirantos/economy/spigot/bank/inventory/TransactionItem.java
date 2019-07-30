@@ -38,9 +38,20 @@ public class TransactionItem extends InventoryItem {
 
     @Override
     public ItemStack createItem() {
-        short data = transaction.getType() == TransactionType.DEPOSIT ||
-                (transaction instanceof Transfer && transaction.getRecipientAccountNumber() == account.getAccountNumber()) ||
-                transaction instanceof Interest ? (short) 5 : (short) 14;
+        short data;
+
+        if(transaction.getType() == TransactionType.DEPOSIT) {
+            data = (short) 5;
+        } else if(transaction.getType() == TransactionType.TRANSFER && transaction instanceof Transfer) {
+            Transfer transfer = (Transfer) transaction;
+            if(transfer.getRecipientAccountID() == transfer.getAccountID()) {
+                data = (short) 5;
+            } else {
+                data = (short) 14;
+            }
+        } else {
+            data = (short) 14;
+        }
 
         String name = ChatColor.RESET + "" + ChatColor.BOLD + (data == 5 ? ChatColor.GREEN : ChatColor.RED) +
                 transaction.getType().toString().substring(0,1) + transaction.getType().toString().substring(1).toLowerCase();
@@ -49,10 +60,10 @@ public class TransactionItem extends InventoryItem {
 
         List<String> lore = new ArrayList<>(Arrays.asList(
                 KEY + "id: " + VALUE + transaction.getID(),
-                KEY + "recipient: " + VALUE + transaction.getRecipientAccountNumber()
+                KEY + "recipient: " + VALUE + transaction.getAccountID()
         ));
-        if(transaction instanceof Transfer) lore.add(KEY + "sender: " + VALUE + ((Transfer) transaction).getSenderAccountNumber());
-        if(!(transaction instanceof Interest)) lore.add(KEY + "amount: " + VALUE + Utils.formatMoney(transaction.getAmount()));
+        if(transaction instanceof Transfer) lore.add(KEY + "sender: " + VALUE + ((Transfer) transaction).getSenderAccountID());
+        lore.add(KEY + "amount: " + VALUE + Utils.formatMoney(transaction.getAmount()));
         if(transaction instanceof Interest) lore.add(KEY + "interestRate: " + VALUE + ((Interest) transaction).getInterestRate()*100 + "%");
         lore.add(KEY + "date: " + VALUE + transaction.getDate().toString());
 

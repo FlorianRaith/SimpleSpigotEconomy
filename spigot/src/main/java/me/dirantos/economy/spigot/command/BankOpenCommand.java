@@ -1,10 +1,7 @@
 package me.dirantos.economy.spigot.command;
 
-import me.dirantos.economy.api.bank.BankManager;
 import me.dirantos.economy.api.account.Account;
 import me.dirantos.economy.api.EconomyService;
-import me.dirantos.economy.spigot.command.CommandInfo;
-import me.dirantos.economy.spigot.command.SubCommand;
 import me.dirantos.economy.spigot.EconomyPlugin;
 import me.dirantos.economy.spigot.bank.inventory.AsyncBankInventoryOpenEvent;
 import org.bukkit.Bukkit;
@@ -22,9 +19,8 @@ public class BankOpenCommand extends SubCommand {
 
     @Override
     protected void handle(CommandSender sender, String[] args) {
-        BankManager bankManager = getEconomyService().getBankManager();
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-            Set<Account> accounts = bankManager.loadAccounts(bankManager.loadBank((Player) sender));
+            Set<Account> accounts = getEconomyService().loadPlayerAccounts((Player) sender);
             Bukkit.getPluginManager().callEvent(new AsyncBankInventoryOpenEvent(accounts, (Player) sender));
         });
     }

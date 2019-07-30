@@ -1,6 +1,6 @@
 package me.dirantos.economy.spigot.bank.inventory;
 
-import me.dirantos.economy.api.account.AccountManager;
+import me.dirantos.economy.api.EconomyService;
 import me.dirantos.economy.api.account.Account;
 import me.dirantos.economy.api.transaction.Transaction;
 import me.dirantos.economy.spigot.inventory.InventoryItem;
@@ -35,16 +35,14 @@ public class BankItem extends InventoryItem {
 
     @Override
     public ItemStack createItem() {
-        ItemStack item = ItemFactory.create(ChatColor.BLUE + "Account - " + account.getAccountNumber(), Material.GOLD_BLOCK, 1);
-        return ItemFactory.setLore(item,
-                KEY + "balance: " + VALUE + Utils.formatMoney(account.getBalance()),
-                KEY + "total transactions: " + VALUE + account.getTransactionIDs().size());
+        ItemStack item = ItemFactory.create(ChatColor.BLUE + "Account - " + account.getID(), Material.GOLD_BLOCK, 1);
+        return ItemFactory.setLore(item, KEY + "balance: " + VALUE + Utils.formatMoney(account.getBalance()));
     }
 
     @Override
     public void onClick(InventoryClickEvent event) {
-        AccountManager accountManager = bankInventory.getAccountManager();
-        Set<Transaction> transactions = accountManager.loadAllTransactions(account);
+        EconomyService economyService = bankInventory.getEconomyService();
+        Set<Transaction> transactions = economyService.loadAccountTransactions(account);
         TransactionInventory inventory = new TransactionInventory(account, transactions, bankInventory, manager, player);
         manager.registerInventory(inventory);
         manager.openInventory(player, inventory);

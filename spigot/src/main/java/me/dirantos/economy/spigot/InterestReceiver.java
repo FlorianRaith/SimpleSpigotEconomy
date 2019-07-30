@@ -1,7 +1,6 @@
 package me.dirantos.economy.spigot;
 
-import me.dirantos.economy.api.bank.BankManager;
-import me.dirantos.economy.api.transaction.TransactionManager;
+import me.dirantos.economy.api.EconomyService;
 import me.dirantos.economy.api.account.Account;
 import me.dirantos.economy.spigot.chat.ChatLevel;
 import me.dirantos.economy.spigot.chat.ChatMessenger;
@@ -17,18 +16,16 @@ public class InterestReceiver {
     private final EconomyPlugin plugin;
     private final ChatMessenger messenger;
     private final InterestConfig interestConfig;
-    private final BankManager bankManager;
-    private final TransactionManager transactionManager;
+    private final EconomyService economyService;
     private final int delay;
     private int schedulerID;
 
-    public InterestReceiver(EconomyPlugin plugin, int delay, InterestConfig interestConfig, BankManager bankManager, TransactionManager transactionManager) {
+    public InterestReceiver(EconomyPlugin plugin, int delay, InterestConfig interestConfig, EconomyService economyService) {
         this.plugin = plugin;
         this.delay = delay;
         this.interestConfig = interestConfig;
         this.messenger = plugin.getChatMessenger();
-        this.bankManager = bankManager;
-        this.transactionManager = transactionManager;
+        this.economyService = economyService;
     }
 
     public void start() {
@@ -38,9 +35,9 @@ public class InterestReceiver {
 
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 for (Player player : players) {
-                    Set<Account> accounts = bankManager.loadAccounts(bankManager.loadBank(player));
+                    Set<Account> accounts = economyService.loadPlayerAccounts(player);
                     for (Account account : accounts) {
-                        transactionManager.makeInterest(account, interestConfig.getInterestRate());
+                        economyService.interest(account, interestConfig.getInterestRate());
                     }
 
                     messenger.send(player, "You have received [[" + interestConfig.getInterestRate() * 100 + "%]] interest", ChatLevel.SUCCESS);

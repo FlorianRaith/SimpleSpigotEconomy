@@ -1,20 +1,25 @@
 package me.dirantos.economy.api.bank;
 
-import me.dirantos.economy.api.DataModel;
-
-import java.util.List;
 import java.util.UUID;
 
-public interface Bank extends DataModel {
-
-    UUID getOwner();
-
-    List<Integer> getAccountNumbers();
+public interface Bank {
 
     /**
-     * returns the corresponding player's money
-     * @return player's money
+     * returns the uuid of the owner of this bank
+     * @return owner's uuid
      */
-    double getMoney();
+    UUID getOwner();
+
+    /**
+     * returns the money the player currently has in his wallet
+     * @return wallet balance
+     */
+    double getWalletBalance();
+
+    /**
+     * returns the sum of money on all the player's accounts
+     * @return bank balance
+     */
+    double getBankBalance();
 
 }

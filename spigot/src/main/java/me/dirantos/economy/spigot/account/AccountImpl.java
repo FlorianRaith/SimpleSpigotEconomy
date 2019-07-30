@@ -7,25 +7,18 @@ import java.util.*;
 
 public final class AccountImpl implements Account {
 
-    private int accountNumber;
+    private int id;
     private final UUID owner;
     private double balance;
-    private final Set<Integer> transactions;
 
-    public AccountImpl(int accountNumber, UUID owner, double balance, Set<Integer> transactions) {
-        this.accountNumber = accountNumber;
+    public AccountImpl(int id, UUID owner, double balance) {
+        this.id = id;
         this.owner = owner;
         this.balance = balance;
-        this.transactions = transactions;
     }
 
-    @Override
-    public int getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(int accountNumber) {
-        this.accountNumber = accountNumber;
+    public int getID() {
+        return id;
     }
 
     @Override
@@ -43,26 +36,11 @@ public final class AccountImpl implements Account {
     }
 
     @Override
-    public int getTransactionsAmount() {
-        return transactions.size();
-    }
-
-    @Override
-    public Set<Integer> getTransactionIDs() {
-        return Collections.unmodifiableSet(transactions);
-    }
-
-    public void addTransaction(Transaction transaction) {
-        transactions.add(transaction.getID());
-    }
-
-    @Override
     public String toString() {
         return "AccountImpl{" +
-                "accountNumber=" + accountNumber +
+                "id=" + id +
                 ", owner=" + owner +
                 ", balance=" + balance +
-                ", transactions=" + transactions +
                 '}';
     }
 }

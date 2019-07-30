@@ -1,4 +1,4 @@
-package me.dirantos.economy.spigot;
+package me.dirantos.economy.spigot.repository;
 
 import com.zaxxer.hikari.HikariDataSource;
 import me.dirantos.economy.spigot.config.MysqlConnectionConfig;
@@ -10,19 +10,16 @@ public final class MySQLConnectionPool {
 
     private final HikariDataSource dataSource;
 
-    public MySQLConnectionPool(String host, int port, String database, String username, String password, int maxPoolSize) {
+    public MySQLConnectionPool(String jdbcUrl, String username, String password, int maxPoolSize) {
         this.dataSource = new HikariDataSource();
         dataSource.setMaximumPoolSize(maxPoolSize);
-        dataSource.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-        dataSource.addDataSourceProperty("serverName", host);
-        dataSource.addDataSourceProperty("port", port);
-        dataSource.addDataSourceProperty("databaseName", database);
+        dataSource.setJdbcUrl(jdbcUrl);
         dataSource.addDataSourceProperty("user", username);
         dataSource.addDataSourceProperty("password", password);
     }
 
     public MySQLConnectionPool(MysqlConnectionConfig config) {
-        this(config.getHost(), config.getPort(), config.getDatabase(), config.getUsername(), config.getPassword(), config.getMaxPoolSize());
+        this(config.getJdbcUrl(), config.getUsername(), config.getPassword(), config.getMaxPoolSize());
     }
 
     public Connection getConnection() throws SQLException {

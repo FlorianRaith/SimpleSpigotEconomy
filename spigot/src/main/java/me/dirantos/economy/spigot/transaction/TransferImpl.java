@@ -7,23 +7,22 @@ import java.util.Date;
 
 public final class TransferImpl extends TransactionImpl implements Transfer {
 
-    private final int senderAccountNumber;
+    private final int senderAccountID;
+    private final int recipientAccountID;
 
-    public TransferImpl(int id, int recipient, double amount, Date date, int senderAccountNumber) {
-        super(id, recipient, amount, date, TransactionType.TRANSFER);
-        this.senderAccountNumber = senderAccountNumber;
+    public TransferImpl(int id, int accountID, double amount, Date date, int senderAccountID, int recipientAccountID) {
+        super(id, accountID, amount, date, TransactionType.TRANSFER);
+        this.senderAccountID = senderAccountID;
+        this.recipientAccountID = recipientAccountID;
     }
 
     @Override
-    public int getSenderAccountNumber() {
-        return senderAccountNumber;
+    public int getSenderAccountID() {
+        return senderAccountID;
     }
 
     @Override
-    public String toString() {
-        return "TransferImpl{" +
-                "senderAccountNumber=" + senderAccountNumber +
-                "} " + super.toString();
+    public int getRecipientAccountID() {
+        return recipientAccountID;
     }
-
 }

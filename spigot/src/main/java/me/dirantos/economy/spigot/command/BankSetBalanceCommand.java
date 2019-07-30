@@ -1,11 +1,8 @@
 package me.dirantos.economy.spigot.command;
 
-import me.dirantos.economy.api.bank.BankManager;
 import me.dirantos.economy.api.bank.Bank;
 import me.dirantos.economy.api.EconomyService;
 import me.dirantos.economy.spigot.chat.ChatLevel;
-import me.dirantos.economy.spigot.command.CommandInfo;
-import me.dirantos.economy.spigot.command.SubCommand;
 import me.dirantos.economy.spigot.EconomyPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -50,13 +47,9 @@ public class BankSetBalanceCommand extends SubCommand {
             return;
         }
 
-        BankManager bankManager = getEconomyService().getBankManager();
         Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-
-            Bank bank = bankManager.loadBank(uuid);
-            bankManager.setBalance(bank, amount);
+            getEconomyService().setWalletBalance(uuid, amount);
             getMessenger().send(sender, "The new balance is [[" + amount + "$]]!", ChatLevel.SUCCESS);
-
         });
 
     }

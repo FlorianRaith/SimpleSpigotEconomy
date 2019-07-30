@@ -4,7 +4,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * This event gets calle when an account gets deleted
+ * This event gets called when an account gets deleted
  */
 public class AsyncAccountDeleteEvent extends Event {
 

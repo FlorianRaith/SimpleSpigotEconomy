@@ -1,10 +1,7 @@
 package me.dirantos.economy.api.bank;
 
-import me.dirantos.economy.api.account.Account;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.util.Set;
 
 /**
  * This events get called when the bank balances changes,
@@ -15,12 +12,10 @@ public class AsyncBankUpdateEvent extends Event {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
     private final Bank bank;
-    private final Set<Account> accounts;
 
-    public AsyncBankUpdateEvent(Bank bank, Set<Account> accounts) {
+    public AsyncBankUpdateEvent(Bank bank) {
         super(true);
         this.bank = bank;
-        this.accounts = accounts;
     }
 
     public static HandlerList getHandlerList() {
@@ -29,10 +24,6 @@ public class AsyncBankUpdateEvent extends Event {
 
     public Bank getBank() {
         return bank;
-    }
-
-    public Set<Account> getAccounts() {
-        return accounts;
     }
 
     @Override

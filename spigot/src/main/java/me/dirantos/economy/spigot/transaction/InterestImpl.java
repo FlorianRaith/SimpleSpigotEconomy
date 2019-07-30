@@ -9,8 +9,8 @@ public final class InterestImpl extends TransactionImpl implements Interest {
 
     private final double interestRate;
 
-    public InterestImpl(int id, int recipient, double amount, Date date, double interestRate) {
-        super(id, recipient, amount, date, TransactionType.INTEREST);
+    public InterestImpl(int id, int accountID, double amount, Date date, double interestRate) {
+        super(id, accountID, amount, date, TransactionType.INTEREST);
         this.interestRate = interestRate;
     }
 
