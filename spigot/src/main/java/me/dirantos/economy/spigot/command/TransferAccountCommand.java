@@ -64,7 +64,7 @@ public class TransferAccountCommand extends SubCommand {
                 return;
             }
 
-            Transfer transfer = getEconomyService().transfer(otherAccount.get(), ownAccount.get(), amount);
+            Transfer transfer = getEconomyService().transfer(ownAccount.get(), otherAccount.get(), amount);
             getMessenger().send(sender, "Successfully transfered [[" + transfer.getAmount() + "$]] from account __#" + transfer.getSenderAccountID() + "__ to account __#" + transfer.getRecipientAccountID() + "__", ChatLevel.SUCCESS);
         });
 
