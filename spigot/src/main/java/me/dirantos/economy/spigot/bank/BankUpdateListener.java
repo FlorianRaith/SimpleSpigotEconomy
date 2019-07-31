@@ -36,8 +36,12 @@ public class BankUpdateListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        sidebars.put(event.getPlayer(), new Sidebar(DISPLAY_NAME));
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> economyService.loadBank(event.getPlayer()));
+        Player player = event.getPlayer();
+        sidebars.put(player, new Sidebar(DISPLAY_NAME));
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            Bank bank = economyService.loadBank(event.getPlayer());
+            updateSidebar(player, bank);
+        });
     }
 
     @EventHandler
