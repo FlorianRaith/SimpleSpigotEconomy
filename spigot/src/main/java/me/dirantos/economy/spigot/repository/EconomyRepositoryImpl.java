@@ -411,7 +411,7 @@ public class EconomyRepositoryImpl implements EconomyRepository {
     public Set<Transaction> findAllAccountTransactions(int accountID) {
         try(
             Connection connection = connectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sqlQueries.getSelectTransaction())
+            PreparedStatement statement = connection.prepareStatement(sqlQueries.getSelectTransactionsByAccount())
         ) {
             statement.setInt(1, accountID);
 

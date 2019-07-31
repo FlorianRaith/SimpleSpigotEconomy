@@ -17,6 +17,7 @@ public final class SQLQueries {
 
     private static final String CREATE_TRANSACTIONS_TABLE = "CREATE TABLE IF NOT EXISTS `%transactionsTable%` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `account_id` INT UNSIGNED NOT NULL , `amount` DECIMAL(15,2) NOT NULL , `type` VARCHAR(16) NOT NULL , `date` DATE NOT NULL , `interest_rate` DOUBLE NULL , `sender_account_id` INT UNSIGNED NULL , `recipient_account_id` INT UNSIGNED NULL , PRIMARY KEY (`id`) , FOREIGN KEY (`account_id`) REFERENCES `%accountsTable%`(`id`) ON DELETE CASCADE )";
     private static final String SELECT_TRANSACTION = "SELECT * FROM `%transactionsTable%` WHERE `id` = ?";
+    private static final String SELECT_TRANSACTIONS_BY_ACCOUNT = "SELECT * FROM `%transactionsTable%` WHERE `account_id` = ?";
     private static final String INSERT_TRANSACTION = "INSERT INTO `%transactionsTable%` (`account_id`, `amount`, `type`, `date`, `interest_rate`, `sender_account_id`, `recipient_account_id`) VALUES (?,?,?,?,?,?,?)";
     private static final String DELETE_TRANSACTION = "DELETE FROM `%transactionsTable%` WHERE `id` = ?";
 
@@ -84,6 +85,10 @@ public final class SQLQueries {
 
     public String getSelectTransaction() {
         return SELECT_TRANSACTION.replace(TRANSACTIONS_TABLE_FIELD, transactionsTable);
+    }
+
+    public String getSelectTransactionsByAccount() {
+        return SELECT_TRANSACTIONS_BY_ACCOUNT.replace(TRANSACTIONS_TABLE_FIELD, transactionsTable);
     }
 
     public String getInsertTransaction() {
