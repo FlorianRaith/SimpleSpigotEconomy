@@ -1,5 +1,8 @@
 # Economy
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ad80a48f7d5242ad8123d1b7ff40fc00)](https://app.codacy.com/manual/FlorianRaith/SimpleSpigotEconomy?utm_source=github.com&utm_medium=referral&utm_content=FlorianRaith/SimpleSpigotEconomy&utm_campaign=Badge_Grade_Dashboard)
+
+
 A simple economy plugin for _Spigot 1.8_.
 The plugin provides an API with which you can handle several operations like creating accounts or making transactions
 
